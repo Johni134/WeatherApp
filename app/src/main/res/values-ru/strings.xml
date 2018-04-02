@@ -2,4 +2,5 @@
 <resources>
     <string name="menu_edit">Редактировать</string>
     <string name="menu_delete">Удалить</string>
+    <string name="menu_clear">Очистить</string>
 </resources>

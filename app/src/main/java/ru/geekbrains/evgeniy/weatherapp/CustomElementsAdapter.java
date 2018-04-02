@@ -22,51 +22,75 @@ class CustomElementsAdapter extends RecyclerView.Adapter<CustomElementsAdapter.C
 
     private List<CityModel> dataSet;
 
+    CustomElementsAdapter(List<CityModel> dataSet) {
+        this.dataSet = dataSet;
+    }
+
+    @NonNull
     @Override
-    public CustomElementsAdapter.CustomViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public CustomElementsAdapter.CustomViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_city, parent, false);
 
-        CustomViewHolder vh = new CustomViewHolder(v);
-        return vh;
+        return new CustomViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(@NonNull CustomElementsAdapter.CustomViewHolder holder, int position) {
-
+        holder.bind(dataSet.get(position), this);
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return dataSet.size();
     }
 
     @Override
     public void removeView(int position) {
-
+        dataSet.remove(position);
+        notifyDataSetChanged();
     }
 
     @Override
     public void editView(int position) {
-
+        CityModel cm = dataSet.get(position);
+        cm.setName("Edited value");
+        notifyDataSetChanged();
     }
 
-    public class CustomViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, PopupMenu.OnMenuItemClickListener {
-        TextView textViewTitle;
-        TextView textViewOption;
+    public void addView(CityModel cityModel) {
+        dataSet.add(cityModel);
+        notifyDataSetChanged();
+    }
+
+    public void clear() {
+        dataSet.clear();
+        notifyDataSetChanged();
+    }
+
+    public class CustomViewHolder extends RecyclerView.ViewHolder
+            implements View.OnClickListener,
+                PopupMenu.OnMenuItemClickListener,
+                View.OnLongClickListener {
+        private TextView textViewTitle;
+        private TextView textViewOption;
+        private TextView textViewTemp;
 
         private OnCustomAdapterClickListener callbacks;
 
-        public CustomViewHolder(View itemView) {
+        CustomViewHolder(View itemView) {
             super(itemView);
-            textViewTitle = itemView.findViewById(R.id.txtTitle);
-            textViewOption = itemView.findViewById(R.id.txtOptionDigit);
+            textViewTitle = itemView.findViewById(R.id.tvTitle);
+            textViewTemp = itemView.findViewById(R.id.tvTemp);
+            textViewOption = itemView.findViewById(R.id.tvOptionDigit);
             textViewOption.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
         }
 
-        void bind(String text, OnCustomAdapterClickListener callbacks) {
+        void bind(CityModel cityModel, OnCustomAdapterClickListener callbacks) {
             this.callbacks = callbacks;
-            textViewTitle.setText(text);
+            textViewTitle.setText(cityModel.getName());
+            textViewTemp.setText(cityModel.getTempC());
         }
 
         @Override
@@ -86,14 +110,24 @@ class CustomElementsAdapter extends RecyclerView.Adapter<CustomElementsAdapter.C
         @Override
         public void onClick(View v) {
             switch (v.getId()){
-                case R.id.txtOptionDigit: {
-                    PopupMenu popup = new PopupMenu(v.getContext(), v);
-                    popup.getMenuInflater().inflate(R.menu.context_menu, popup.getMenu());
-                    popup.setOnMenuItemClickListener(this);
-                    popup.show();
+                case R.id.tvOptionDigit: {
+                    showPopupMenu(v);
                     break;
                 }
             }
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            showPopupMenu(v);
+            return false;
+        }
+
+        private void showPopupMenu(View v) {
+            PopupMenu popup = new PopupMenu(v.getContext(), v);
+            popup.getMenuInflater().inflate(R.menu.context_menu, popup.getMenu());
+            popup.setOnMenuItemClickListener(this);
+            popup.show();
         }
     }
 }
