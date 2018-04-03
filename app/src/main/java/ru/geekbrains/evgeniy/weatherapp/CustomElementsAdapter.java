@@ -48,19 +48,19 @@ class CustomElementsAdapter extends RecyclerView.Adapter<CustomElementsAdapter.C
     @Override
     public void removeView(int position) {
         dataSet.remove(position);
-        notifyDataSetChanged();
+        notifyItemRemoved(position);
     }
 
     @Override
     public void editView(int position) {
         CityModel cm = dataSet.get(position);
         cm.setName("Edited value");
-        notifyDataSetChanged();
+        notifyItemChanged(position);
     }
 
     public void addView(CityModel cityModel) {
         dataSet.add(cityModel);
-        notifyDataSetChanged();
+        notifyItemInserted(dataSet.size() - 1);
     }
 
     public void clear() {
