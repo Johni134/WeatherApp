@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_cities"
+            android:icon="@android:drawable/ic_menu_sort_alphabetically"
+            android:title="@string/cities" />
+        <item
+            android:id="@+id/nav_favorites"
+            android:icon="@android:drawable/ic_menu_gallery"
+            android:title="@string/favorites" />
+        <item
+            android:id="@+id/nav_feedback"
+            android:icon="@android:drawable/ic_menu_send"
+            android:title="@string/feedback" />
+        <item
+            android:id="@+id/nav_about"
+            android:icon="@android:drawable/ic_menu_help"
+            android:title="@string/about" />
+    </group>
+
+</menu>

@@ -18,11 +18,11 @@ interface OnCustomAdapterClickListener{
     void editView(int position);
 }
 
-class CustomElementsAdapter extends RecyclerView.Adapter<CustomElementsAdapter.CustomViewHolder> implements OnCustomAdapterClickListener{
+public class CustomElementsAdapter extends RecyclerView.Adapter<CustomElementsAdapter.CustomViewHolder> implements OnCustomAdapterClickListener{
 
     private List<CityModel> dataSet;
 
-    CustomElementsAdapter(List<CityModel> dataSet) {
+    public CustomElementsAdapter(List<CityModel> dataSet) {
         this.dataSet = dataSet;
     }
 

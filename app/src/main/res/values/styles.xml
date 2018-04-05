@@ -17,4 +17,33 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="MyAppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:colorBackground">@color/colorBackground</item>
+        <item name="android:buttonStyle">@style/CustomButton</item>
+    </style>
+
+    <style name ="CustomButton" parent="@android:style/Widget.Button">
+        <item name="android:background">@drawable/custom_button</item>
+    </style>
+
+    <style name="Widget.Platform.TextView" parent="@android:style/Widget.TextView" >
+        <item name="android:padding">@dimen/tv_padding</item>
+    </style>
+
+    <style name="Widget.Platform.TextView.Title">
+        <item name="android:padding">@dimen/tv_title_padding</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:gravity">left</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Widget.Platform.TextView.Description">
+        <item name="android:textSize">14sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textStyle">italic</item>
+    </style>
+
 </resources>

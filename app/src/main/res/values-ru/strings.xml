@@ -3,4 +3,9 @@
     <string name="menu_edit">Редактировать</string>
     <string name="menu_delete">Удалить</string>
     <string name="menu_clear">Очистить</string>
+    <string name="test_snackbar">Тест snackbar</string>
+    <string name="cities">Список городов</string>
+    <string name="favorites">Избранное</string>
+    <string name="feedback">Обратная связь</string>
+    <string name="about">О программе</string>
 </resources>

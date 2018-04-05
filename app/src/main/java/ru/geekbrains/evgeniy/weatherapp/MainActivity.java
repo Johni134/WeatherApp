@@ -1,95 +1,108 @@
 package ru.geekbrains.evgeniy.weatherapp;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
-import android.view.Menu;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
 
-import java.util.ArrayList;
-import java.util.List;
+import ru.geekbrains.evgeniy.weatherapp.fragments.AboutFragment;
+import ru.geekbrains.evgeniy.weatherapp.fragments.MainContentFragment;
 
-import ru.geekbrains.evgeniy.weatherapp.model.CityModel;
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-
-    private FloatingActionButton addView;
-    private RecyclerView recycleView;
-    private CustomElementsAdapter adapter;
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.simple_menu, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        switch (item.getItemId()) {
-            case R.id.menu_clear:
-                adapter.clear();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
+    private NavigationView navigationView;
+    private DrawerLayout drawer;
+    private MainContentFragment mainContentFragment = null;
+    private AboutFragment aboutFragment = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // init toolbar
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        // init drawer
+        drawer = findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        // init views
         initViews();
 
-        addItemTouchCallback();
+        // main content by default (can use shared properties in future)
+        mainContentFragment = new MainContentFragment();
+        setNewScreen(mainContentFragment);
     }
 
     private void initViews() {
-        addView = findViewById(R.id.fab_add);
-        addView.setOnClickListener(this);
-        recycleView = findViewById(R.id.rv_main);
-        recycleView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new CustomElementsAdapter(getData());
-        recycleView.setAdapter(adapter);
-    }
-
-    private void addItemTouchCallback() {
-        ItemTouchHelper.SimpleCallback  simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
-            @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                return false;
-            }
-
-            @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                adapter.removeView(viewHolder.getAdapterPosition());
-            }
-        };
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
-        itemTouchHelper.attachToRecyclerView(recycleView);
+        navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
     }
 
     @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.fab_add: {
-                adapter.addView(new CityModel("New"));
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+        // main content is default fragment
+        switch (item.getItemId()) {
+            case R.id.nav_about: {
+                if (aboutFragment == null) {
+                    aboutFragment = new AboutFragment();
+                }
+                setNewScreen(aboutFragment);
                 break;
             }
+            case R.id.nav_cities: {
+                if(mainContentFragment == null) {
+                    mainContentFragment = new MainContentFragment();
+                }
+                setNewScreen(mainContentFragment);
+                break;
+            }
+            case R.id.nav_favorites: {
+
+            }
+            case R.id.nav_feedback: {
+
+            }
+            default:
+                if(mainContentFragment == null) {
+                    mainContentFragment = new MainContentFragment();
+                }
+                setNewScreen(mainContentFragment);
         }
+
+        drawer.closeDrawer(GravityCompat.START);
+
+        return true;
     }
 
+    // setting new screen by replacing content
+    private void setNewScreen(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.content, fragment);
+        fragmentTransaction.commit();
+    }
 
-    public List<CityModel> getData() {
-        List<CityModel> result = new ArrayList<>();
-        for (int i = 0; i < 10; i++){
-            result.add(new CityModel("Element " + i));
+    @Override
+    public void onBackPressed() {
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
         }
-        return result;
     }
 }
