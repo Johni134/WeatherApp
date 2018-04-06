@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // main content by default (can use shared properties in future)
         mainContentFragment = new MainContentFragment();
         setNewScreen(mainContentFragment);
+        navigationView.setCheckedItem(R.id.nav_cities);
     }
 
     private void initViews() {
@@ -54,6 +55,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+        item.setChecked(true);
 
         // main content is default fragment
         switch (item.getItemId()) {
