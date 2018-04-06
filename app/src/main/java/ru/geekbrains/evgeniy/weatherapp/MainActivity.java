@@ -22,6 +22,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout drawer;
     private MainContentFragment mainContentFragment = null;
     private AboutFragment aboutFragment = null;
+    private final String TAG_CURRENT_FRAGMENT = "current_fragment";
+    Fragment curFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,9 +44,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // init views
         initViews();
 
-        // main content by default (can use shared properties in future)
-        mainContentFragment = new MainContentFragment();
-        setNewScreen(mainContentFragment);
+        if(savedInstanceState != null) {
+            setNewScreen(getSupportFragmentManager().getFragment(savedInstanceState, TAG_CURRENT_FRAGMENT));
+        }
+        else {
+            // main content by default (can use shared properties in future)
+            mainContentFragment = new MainContentFragment();
+            setNewScreen(mainContentFragment);
+            navigationView.setCheckedItem(R.id.nav_cities);
+        }
     }
 
     private void initViews() {
@@ -54,6 +62,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+        item.setChecked(true);
 
         // main content is default fragment
         switch (item.getItemId()) {
@@ -91,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     // setting new screen by replacing content
     private void setNewScreen(Fragment fragment) {
+        curFragment = fragment;
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.content, fragment);
@@ -104,5 +115,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        getSupportFragmentManager().putFragment(outState, TAG_CURRENT_FRAGMENT, curFragment);
     }
 }
