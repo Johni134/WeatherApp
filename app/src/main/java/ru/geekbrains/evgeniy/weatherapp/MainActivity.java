@@ -117,7 +117,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
-    // setting new screen by replacing content
+    // setting new screen by hiding old fragment and adding/showing new one
+    //
     private void setNewScreen(Fragment fragment) {
         curFragment = fragment;
         List<Fragment> fragmentList = fragmentManager.getFragments();
