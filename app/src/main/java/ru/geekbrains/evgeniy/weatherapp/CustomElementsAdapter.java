@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ru.geekbrains.evgeniy.weatherapp.model.CityModel;
@@ -49,6 +50,10 @@ public class CustomElementsAdapter extends RecyclerView.Adapter<CustomElementsAd
     public void removeView(int position) {
         dataSet.remove(position);
         notifyItemRemoved(position);
+    }
+
+    public List<CityModel> getList() {
+        return dataSet;
     }
 
     @Override

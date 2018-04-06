@@ -13,6 +13,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import java.util.List;
+
 import ru.geekbrains.evgeniy.weatherapp.fragments.AboutFragment;
 import ru.geekbrains.evgeniy.weatherapp.fragments.MainContentFragment;
 
@@ -22,8 +24,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout drawer;
     private MainContentFragment mainContentFragment = null;
     private AboutFragment aboutFragment = null;
-    private final String TAG_CURRENT_FRAGMENT = "current_fragment";
-    Fragment curFragment;
+    private final String EXTRA_MAIN_FRAGMENT = "main_fragment";
+    private final String EXTRA_ABOUT_FRAGMENT = "about_fragment";
+    private final String EXTRA_CURRENT_FRAGMENT = "current_fragment";
+    private final String EXTRA_CURRENT_CHECKED_NAV_ITEM = "current_nav_item";
+    private int navCheckedItem = R.id.nav_cities;
+    private Fragment curFragment = null;
+    FragmentManager fragmentManager = getSupportFragmentManager();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,15 +52,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // init views
         initViews();
 
+        // saved instance
         if(savedInstanceState != null) {
-            setNewScreen(getSupportFragmentManager().getFragment(savedInstanceState, TAG_CURRENT_FRAGMENT));
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            aboutFragment = (AboutFragment) getSupportFragmentManager().getFragment(savedInstanceState, EXTRA_ABOUT_FRAGMENT);
+            if(aboutFragment != null) {
+                fragmentTransaction.add(R.id.content, aboutFragment, aboutFragment.getTag());
+                fragmentTransaction.hide(aboutFragment);
+            }
+            mainContentFragment = (MainContentFragment) getSupportFragmentManager().getFragment(savedInstanceState, EXTRA_MAIN_FRAGMENT);
+            if(mainContentFragment != null) {
+                fragmentTransaction.add(R.id.content, mainContentFragment, mainContentFragment.getTag());
+                fragmentTransaction.hide(mainContentFragment);
+            }
+            setNewScreen(getSupportFragmentManager().getFragment(savedInstanceState, EXTRA_CURRENT_FRAGMENT));
+            navCheckedItem = savedInstanceState.getInt(EXTRA_CURRENT_CHECKED_NAV_ITEM);
         }
         else {
             // main content by default (can use shared properties in future)
             mainContentFragment = new MainContentFragment();
             setNewScreen(mainContentFragment);
-            navigationView.setCheckedItem(R.id.nav_cities);
         }
+        navigationView.setCheckedItem(navCheckedItem);
     }
 
     private void initViews() {
@@ -64,20 +85,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
         item.setChecked(true);
-
+        navCheckedItem = item.getItemId();
         // main content is default fragment
-        switch (item.getItemId()) {
+        switch (navCheckedItem) {
             case R.id.nav_about: {
-                if (aboutFragment == null) {
+                if (aboutFragment == null)
                     aboutFragment = new AboutFragment();
-                }
                 setNewScreen(aboutFragment);
                 break;
             }
             case R.id.nav_cities: {
-                if(mainContentFragment == null) {
+                if (mainContentFragment == null)
                     mainContentFragment = new MainContentFragment();
-                }
                 setNewScreen(mainContentFragment);
                 break;
             }
@@ -88,9 +107,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             }
             default:
-                if(mainContentFragment == null) {
+                if (mainContentFragment == null)
                     mainContentFragment = new MainContentFragment();
-                }
                 setNewScreen(mainContentFragment);
         }
 
@@ -102,9 +120,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // setting new screen by replacing content
     private void setNewScreen(Fragment fragment) {
         curFragment = fragment;
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        List<Fragment> fragmentList = fragmentManager.getFragments();
+        Fragment primaryFragment = null;
+        for (Fragment f: fragmentList) {
+            if(f.isVisible()) {
+                primaryFragment = f;
+                break;
+            }
+        }
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.content, fragment);
+        if(primaryFragment != null) {
+            fragmentTransaction.hide(primaryFragment);
+        }
+        Fragment nextFragment = fragmentManager.findFragmentByTag(fragment.getTag());
+        if(nextFragment != null)
+            fragmentTransaction.show(nextFragment);
+        else
+            fragmentTransaction.add(R.id.content, fragment, fragment.toString());
+
         fragmentTransaction.commit();
     }
 
@@ -121,6 +154,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        getSupportFragmentManager().putFragment(outState, TAG_CURRENT_FRAGMENT, curFragment);
+        List<Fragment> fragmentList = fragmentManager.getFragments();
+        for (Fragment f: fragmentList) {
+            if(f.getClass() == MainContentFragment.class) {
+                fragmentManager.putFragment(outState, EXTRA_MAIN_FRAGMENT, f);
+            }
+            if(f.getClass() == AboutFragment.class) {
+                fragmentManager.putFragment(outState, EXTRA_ABOUT_FRAGMENT, f);
+            }
+        }
+        fragmentManager.putFragment(outState, EXTRA_CURRENT_FRAGMENT, curFragment);
+
+        outState.putInt(EXTRA_CURRENT_CHECKED_NAV_ITEM, navCheckedItem);
     }
 }

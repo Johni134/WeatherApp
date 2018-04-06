@@ -1,9 +1,9 @@
 package ru.geekbrains.evgeniy.weatherapp.fragments;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -32,6 +32,8 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
     private CustomElementsAdapter adapter;
     private Button customButton;
 
+    private final String EXTRA_LIST = "list_classes";
+
     // options menu
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -55,8 +57,18 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // show options menu in fragment
         setHasOptionsMenu(true);
+
+        if(savedInstanceState != null) {
+            adapter = new CustomElementsAdapter(savedInstanceState.<CityModel>getParcelableArrayList(EXTRA_LIST));
+        }
+        else {
+            // adapter new
+            adapter = new CustomElementsAdapter(getData());
+        }
+
         // init view
         View view = inflater.inflate(R.layout.main_content, container, false);
+
         initViews(view);
         addItemTouchCallback();
         return view;
@@ -67,7 +79,6 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
         addView.setOnClickListener(this);
         recycleView = view.findViewById(R.id.rv_main);
         recycleView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        adapter = new CustomElementsAdapter(getData());
         recycleView.setAdapter(adapter);
         customButton = view.findViewById(R.id.btn_custom);
         customButton.setOnClickListener(this);
@@ -112,4 +123,12 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
         }
         return result;
     }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(EXTRA_LIST, (ArrayList<? extends Parcelable>) adapter.getList());
+    }
+
+
 }
