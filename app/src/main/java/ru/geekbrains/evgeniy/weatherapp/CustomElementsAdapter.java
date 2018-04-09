@@ -9,19 +9,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import ru.geekbrains.evgeniy.weatherapp.fragments.CityWeatherListener;
 import ru.geekbrains.evgeniy.weatherapp.model.CityModel;
 
 interface OnCustomAdapterClickListener{
     void removeView(int position);
     void editView(int position);
+    void showDetailView(int position);
 }
 
 public class CustomElementsAdapter extends RecyclerView.Adapter<CustomElementsAdapter.CustomViewHolder> implements OnCustomAdapterClickListener{
 
     private List<CityModel> dataSet;
+    private ViewGroup viewGroup;
 
     public CustomElementsAdapter(List<CityModel> dataSet) {
         this.dataSet = dataSet;
@@ -30,10 +35,24 @@ public class CustomElementsAdapter extends RecyclerView.Adapter<CustomElementsAd
     @NonNull
     @Override
     public CustomElementsAdapter.CustomViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        viewGroup = parent;
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_city, parent, false);
 
         return new CustomViewHolder(v);
+    }
+
+    public String getIDs() {
+        if(dataSet == null || dataSet.size() == 0) {
+            return "";
+        } else {
+            List<String> ids = new ArrayList<>();
+            for (CityModel cm: dataSet) {
+                ids.add(String.valueOf(cm.id));
+            }
+            return StringUtils.join(ids, ",");
+
+        }
     }
 
     @Override
@@ -63,9 +82,22 @@ public class CustomElementsAdapter extends RecyclerView.Adapter<CustomElementsAd
         notifyItemChanged(position);
     }
 
+    @Override
+    public void showDetailView(int position) {
+        ((CityWeatherListener) viewGroup.getContext()).showCityWeather(dataSet.get(position));
+    }
+
     public void addView(CityModel cityModel) {
         dataSet.add(cityModel);
         notifyItemInserted(dataSet.size() - 1);
+    }
+
+    public boolean alreadyExist(CityModel cityModel) {
+        for (CityModel cm: dataSet) {
+            if(cm.id.equals(cityModel.id))
+                return true;
+        }
+        return false;
     }
 
     public void clear() {
@@ -89,12 +121,14 @@ public class CustomElementsAdapter extends RecyclerView.Adapter<CustomElementsAd
             textViewTemp = itemView.findViewById(R.id.tvTemp);
             textViewOption = itemView.findViewById(R.id.tvOptionDigit);
             textViewOption.setOnClickListener(this);
+            textViewTitle.setOnClickListener(this);
+            textViewTemp.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
         }
 
         void bind(CityModel cityModel, OnCustomAdapterClickListener callbacks) {
             this.callbacks = callbacks;
-            textViewTitle.setText(cityModel.getName());
+            textViewTitle.setText(cityModel.getName() + ", " + cityModel.sys.country);
             textViewTemp.setText(cityModel.getTempC());
         }
 
@@ -115,10 +149,14 @@ public class CustomElementsAdapter extends RecyclerView.Adapter<CustomElementsAd
         @Override
         public void onClick(View v) {
             switch (v.getId()){
-                case R.id.tvOptionDigit: {
+                case R.id.tvOptionDigit:
                     showPopupMenu(v);
                     break;
-                }
+                case R.id.tvTemp:
+                case R.id.tvTitle:
+                    if (callbacks != null) callbacks.showDetailView(getAdapterPosition());
+                    break;
+                default:
             }
         }
 

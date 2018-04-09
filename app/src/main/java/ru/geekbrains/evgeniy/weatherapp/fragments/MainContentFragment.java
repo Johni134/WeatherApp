@@ -1,6 +1,7 @@
 package ru.geekbrains.evgeniy.weatherapp.fragments;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,29 +11,39 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import ru.geekbrains.evgeniy.weatherapp.CustomElementsAdapter;
 import ru.geekbrains.evgeniy.weatherapp.R;
+import ru.geekbrains.evgeniy.weatherapp.WeatherDataLoader;
 import ru.geekbrains.evgeniy.weatherapp.model.CityModel;
+import ru.geekbrains.evgeniy.weatherapp.model.CityModelArray;
+import ru.geekbrains.evgeniy.weatherapp.ui.AddCityDialog;
+import ru.geekbrains.evgeniy.weatherapp.ui.dialogs.AddCityDialogListener;
 
-public class MainContentFragment extends Fragment implements View.OnClickListener {
+public class MainContentFragment extends Fragment implements View.OnClickListener, AddCityDialogListener {
 
     private FloatingActionButton addView;
     private RecyclerView recycleView;
-    private CustomElementsAdapter adapter;
-    private Button customButton;
+    private CustomElementsAdapter adapter = null;
 
     private final String EXTRA_LIST = "list_classes";
+
+    private final Handler handler = new Handler();
+
+    private List<CityModel> list = null;
 
     // options menu
     @Override
@@ -47,31 +58,71 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
             case R.id.menu_clear:
                 adapter.clear();
                 return true;
+            case R.id.menu_refresh:
+                updateWeathers(adapter.getIDs());
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
+    // on create view
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // show options menu in fragment
         setHasOptionsMenu(true);
 
-        if(savedInstanceState != null) {
-            adapter = new CustomElementsAdapter(savedInstanceState.<CityModel>getParcelableArrayList(EXTRA_LIST));
-        }
-        else {
-            // adapter new
-            adapter = new CustomElementsAdapter(getData());
-        }
-
         // init view
         View view = inflater.inflate(R.layout.main_content, container, false);
 
         initViews(view);
         addItemTouchCallback();
+
+        if(savedInstanceState != null) {
+            adapter = new CustomElementsAdapter(savedInstanceState.<CityModel>getParcelableArrayList(EXTRA_LIST));
+        }
+
+        if(list != null && adapter == null) {
+            adapter = new CustomElementsAdapter(list);
+        }
+
+        if(adapter == null) {
+            updateWeathers(getString(R.string.default_cities));
+        } else {
+            recycleView.setAdapter(adapter);
+        }
+
         return view;
+    }
+
+    private void updateWeathers(final String ids) {
+        new Thread() {
+            public void run() {
+                final CityModelArray cityModelArray = WeatherDataLoader.getListWeatherByIDs(getContext(), ids);
+                if(cityModelArray == null) {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getContext(), getString(R.string.place_not_found),
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    });
+                } else {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            boolean isUpdating = (recycleView.getAdapter() != null);
+                            adapter = new CustomElementsAdapter(cityModelArray.list);
+                            recycleView.setAdapter(adapter);
+                            if (isUpdating) {
+                                Toast.makeText(getContext(), getString(R.string.info_was_updated),
+                                        Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
+                }
+            }
+        }.start();
     }
 
     private void initViews(View view) {
@@ -79,9 +130,6 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
         addView.setOnClickListener(this);
         recycleView = view.findViewById(R.id.rv_main);
         recycleView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recycleView.setAdapter(adapter);
-        customButton = view.findViewById(R.id.btn_custom);
-        customButton.setOnClickListener(this);
     }
 
     private void addItemTouchCallback() {
@@ -104,24 +152,10 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.fab_add: {
-                adapter.addView(new CityModel("New"));
-                break;
-            }
-            case R.id.btn_custom: {
-                Snackbar.make(v, getString(R.string.test_snackbar), Snackbar.LENGTH_SHORT)
-                        .setAction("Action", null)
-                        .show();
+                showInputDialog();
                 break;
             }
         }
-    }
-
-    public List<CityModel> getData() {
-        List<CityModel> result = new ArrayList<>();
-        for (int i = 0; i < 10; i++){
-            result.add(new CityModel("Element " + i));
-        }
-        return result;
     }
 
     @Override
@@ -130,5 +164,52 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
         outState.putParcelableArrayList(EXTRA_LIST, (ArrayList<? extends Parcelable>) adapter.getList());
     }
 
+    public List<CityModel> getList() {
+        return adapter.getList();
+    }
 
+    public void setList(List<CityModel> list) {
+        this.list = list;
+    }
+
+    private void showInputDialog() {
+        new AddCityDialog().show(this.getFragmentManager(), "branch_filter_mode_dialog");
+    }
+
+    @Override
+    public void onAddCity(String city) {
+        addCity(city);
+    }
+
+    private void addCity(final String city) {
+        new Thread() {//Отдельный поток для получения новых данных в фоне
+            public void run() {
+                final CityModel model = WeatherDataLoader.getWeatherByCity(getActivity(), city);
+                // Вызов методов напрямую может вызвать runtime error
+                // Мы не можем напрямую обновить UI, поэтому используем handler, чтобы обновить интерфейс в главном потоке.
+                if (model == null) {
+                    handler.post(new Runnable() {
+                        public void run() {
+                            Toast.makeText(getActivity(), getString(R.string.place_not_found),
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    });
+                } else {
+                    handler.post(new Runnable() {
+                        public void run() {
+                            if(adapter.alreadyExist(model)) {
+                                Toast.makeText(getActivity(), getString(R.string.city_already_exist)
+                                                + " ("
+                                                + model.getName()
+                                                + ")",
+                                        Toast.LENGTH_LONG).show();
+                            } else {
+                                adapter.addView(model);
+                            }
+                        }
+                    });
+                }
+            }
+        }.start();
+    }
 }

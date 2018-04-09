@@ -1,6 +1,7 @@
 package ru.geekbrains.evgeniy.weatherapp;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -13,24 +14,31 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import ru.geekbrains.evgeniy.weatherapp.fragments.AboutFragment;
+import ru.geekbrains.evgeniy.weatherapp.fragments.CityWeatherFragment;
+import ru.geekbrains.evgeniy.weatherapp.fragments.CityWeatherListener;
 import ru.geekbrains.evgeniy.weatherapp.fragments.MainContentFragment;
+import ru.geekbrains.evgeniy.weatherapp.model.CityModel;
+import ru.geekbrains.evgeniy.weatherapp.ui.dialogs.AddCityDialogListener;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, AddCityDialogListener, CityWeatherListener {
 
     private NavigationView navigationView;
     private DrawerLayout drawer;
+
     private MainContentFragment mainContentFragment = null;
     private AboutFragment aboutFragment = null;
-    private final String EXTRA_MAIN_FRAGMENT = "main_fragment";
-    private final String EXTRA_ABOUT_FRAGMENT = "about_fragment";
-    private final String EXTRA_CURRENT_FRAGMENT = "current_fragment";
-    private final String EXTRA_CURRENT_CHECKED_NAV_ITEM = "current_nav_item";
-    private int navCheckedItem = R.id.nav_cities;
+    private CityWeatherFragment cityWeatherFragment = null;
     private Fragment curFragment = null;
     FragmentManager fragmentManager = getSupportFragmentManager();
+
+    private final String EXTRA_CURRENT_CHECKED_NAV_ITEM = "current_nav_item";
+    private final String EXTRA_MAIN_ARRAYLIST = "main_arraylist";
+    private final String EXTRA_CITY_MODEL_KEY = "city_model_key";
+
+    private int navCheckedItem = R.id.nav_cities;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,26 +62,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         // saved instance
         if(savedInstanceState != null) {
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            aboutFragment = (AboutFragment) getSupportFragmentManager().getFragment(savedInstanceState, EXTRA_ABOUT_FRAGMENT);
-            if(aboutFragment != null) {
-                fragmentTransaction.add(R.id.content, aboutFragment, aboutFragment.getTag());
-                fragmentTransaction.hide(aboutFragment);
+            if(savedInstanceState.containsKey(EXTRA_MAIN_ARRAYLIST)) {
+                mainContentFragment = new MainContentFragment();
+                mainContentFragment.setList(savedInstanceState.<CityModel>getParcelableArrayList(EXTRA_MAIN_ARRAYLIST));
             }
-            mainContentFragment = (MainContentFragment) getSupportFragmentManager().getFragment(savedInstanceState, EXTRA_MAIN_FRAGMENT);
-            if(mainContentFragment != null) {
-                fragmentTransaction.add(R.id.content, mainContentFragment, mainContentFragment.getTag());
-                fragmentTransaction.hide(mainContentFragment);
+            if(savedInstanceState.containsKey(EXTRA_CITY_MODEL_KEY)) {
+                cityWeatherFragment = new CityWeatherFragment();
+                cityWeatherFragment.setCityModel((CityModel) savedInstanceState.getParcelable(EXTRA_CITY_MODEL_KEY));
             }
-            setNewScreen(getSupportFragmentManager().getFragment(savedInstanceState, EXTRA_CURRENT_FRAGMENT));
             navCheckedItem = savedInstanceState.getInt(EXTRA_CURRENT_CHECKED_NAV_ITEM);
         }
-        else {
-            // main content by default (can use shared properties in future)
-            mainContentFragment = new MainContentFragment();
-            setNewScreen(mainContentFragment);
+        onNavigationItemSelected(navigationView.getMenu().findItem(navCheckedItem));
+        if(cityWeatherFragment != null) {
+            showCityWeather(cityWeatherFragment.getCityModel());
         }
-        navigationView.setCheckedItem(navCheckedItem);
     }
 
     private void initViews() {
@@ -88,24 +90,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navCheckedItem = item.getItemId();
         // main content is default fragment
         switch (navCheckedItem) {
-            case R.id.nav_about: {
+            case R.id.nav_about:
                 if (aboutFragment == null)
                     aboutFragment = new AboutFragment();
                 setNewScreen(aboutFragment);
                 break;
-            }
-            case R.id.nav_cities: {
+            case R.id.nav_cities:
                 if (mainContentFragment == null)
                     mainContentFragment = new MainContentFragment();
                 setNewScreen(mainContentFragment);
                 break;
-            }
-            case R.id.nav_favorites: {
-
-            }
-            case R.id.nav_feedback: {
-
-            }
+            case R.id.nav_favorites:
+            case R.id.nav_feedback:
             default:
                 if (mainContentFragment == null)
                     mainContentFragment = new MainContentFragment();
@@ -120,25 +116,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // setting new screen by hiding old fragment and adding/showing new one
     //
     private void setNewScreen(Fragment fragment) {
-        curFragment = fragment;
-        List<Fragment> fragmentList = fragmentManager.getFragments();
-        Fragment primaryFragment = null;
-        for (Fragment f: fragmentList) {
-            if(f.isVisible()) {
-                primaryFragment = f;
-                break;
-            }
-        }
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        if(primaryFragment != null) {
-            fragmentTransaction.hide(primaryFragment);
-        }
-        Fragment nextFragment = fragmentManager.findFragmentByTag(fragment.getTag());
-        if(nextFragment != null)
-            fragmentTransaction.show(nextFragment);
-        else
-            fragmentTransaction.add(R.id.content, fragment, fragment.toString());
-
+        fragmentTransaction.replace(R.id.content, fragment);
         fragmentTransaction.commit();
     }
 
@@ -155,17 +134,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        List<Fragment> fragmentList = fragmentManager.getFragments();
-        for (Fragment f: fragmentList) {
-            if(f.getClass() == MainContentFragment.class) {
-                fragmentManager.putFragment(outState, EXTRA_MAIN_FRAGMENT, f);
-            }
-            if(f.getClass() == AboutFragment.class) {
-                fragmentManager.putFragment(outState, EXTRA_ABOUT_FRAGMENT, f);
-            }
+        if (mainContentFragment != null) {
+            outState.putParcelableArrayList(EXTRA_MAIN_ARRAYLIST, (ArrayList<? extends Parcelable>) mainContentFragment.getList());
         }
-        fragmentManager.putFragment(outState, EXTRA_CURRENT_FRAGMENT, curFragment);
-
+        if (cityWeatherFragment != null && cityWeatherFragment.isVisible()) {
+            outState.putParcelable(EXTRA_CITY_MODEL_KEY, cityWeatherFragment.getCityModel());
+        }
         outState.putInt(EXTRA_CURRENT_CHECKED_NAV_ITEM, navCheckedItem);
+    }
+
+    @Override
+    public void onAddCity(String city) {
+        if(mainContentFragment != null) {
+            mainContentFragment.onAddCity(city);
+        }
+    }
+
+    @Override
+    public void showCityWeather(CityModel cityModel) {
+        if(cityWeatherFragment == null)
+            cityWeatherFragment = new CityWeatherFragment();
+        cityWeatherFragment.setCityModel(cityModel);
+
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.content, cityWeatherFragment);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
     }
 }

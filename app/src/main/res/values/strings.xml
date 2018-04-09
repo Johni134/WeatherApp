@@ -12,4 +12,29 @@
     <string name="about">About</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="weather_sunny">&#xf00d;</string>
+    <string name="weather_clear_night">&#xf02e;</string>
+    <string name="weather_foggy">&#xf014;</string>
+    <string name="weather_cloudy">&#xf013;</string>
+    <string name="weather_rainy">&#xf019;</string>
+    <string name="weather_snowy">&#xf01b;</string>
+    <string name="weather_thunder">&#xf01e;</string>
+    <string name="weather_drizzle">&#xf01c;</string>
+
+    <string name="place_not_found">Sorry, no weather data found.</string>
+
+    <string name="open_weather_maps_app_id">5a7b4adfb331abce78c619ae441ab686</string>
+
+    <!-- не нашел я каких-то дефолтных городов, сам список заполнил немного -->
+    <string name="default_cities">524901,498817,491422,694423,703448,2013348</string>
+    <string name="refresh">Refresh</string>
+
+    <string name="add_city">Add city</string>
+    <string name="add_city_dialog">Add city</string>
+
+    <string name="label_ok">Add</string>
+    <string name="menu_refresh">Refresh</string>
+    <string name="info_was_updated">Information was updated</string>
+    <string name="city_already_exist">City already exist</string>
 </resources>

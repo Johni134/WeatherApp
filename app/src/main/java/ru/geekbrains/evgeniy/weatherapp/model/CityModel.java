@@ -3,27 +3,38 @@ package ru.geekbrains.evgeniy.weatherapp.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class CityModel implements Parcelable {
-    private String name;
-    private Integer temp;
+import com.google.gson.annotations.SerializedName;
 
-    public CityModel(String name, Integer temp) {
-        this.name = name;
-        this.temp = temp;
-    }
+import java.util.ArrayList;
+import java.util.List;
+
+public class CityModel implements Parcelable {
+
+    public CoordModel coord;
+    public List<WeatherModel> weather = new ArrayList<>();
+    public String base;
+    public Long id;
+
+    public int cod;
+    public MainWheatherInfo main;
+    public SystemModel sys;
+    public long dt;
+
+    @SerializedName("name")
+    private String name;
 
     public CityModel(String name) {
         this.name = name;
-        temp = (int)(Math.random()*100 - 50);
+        main = new MainWheatherInfo();
+        main.temp = Math.random() * 100 - 50;
     }
 
-    protected CityModel(Parcel in) {
-        name = in.readString();
-        if (in.readByte() == 0) {
-            temp = null;
-        } else {
-            temp = in.readInt();
-        }
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public static final Creator<CityModel> CREATOR = new Creator<CityModel>() {
@@ -38,39 +49,112 @@ public class CityModel implements Parcelable {
         }
     };
 
-    public Integer getTemp() {
-        return temp;
-    }
-
-    public String getTempC() {
-        return temp.toString() + "\u00B0";
-    }
-
-    public void setTemp(int temp) {
-        this.temp = temp;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     @Override
     public int describeContents() {
         return 0;
     }
 
+    protected CityModel(Parcel in) {
+        base = in.readString();
+        if (in.readByte() == 0) {
+            id = null;
+        } else {
+            id = in.readLong();
+        }
+        name = in.readString();
+        cod = in.readInt();
+        dt = in.readLong();
+        // for classes
+        // CoordModel
+        if (in.readByte() == 0) {
+            coord = null;
+        } else {
+            coord = new CoordModel();
+            coord.lat = in.readFloat();
+            coord.lon = in.readFloat();
+        }
+        //List<WeatherModel>
+        in.readList(weather, WeatherModel.class.getClassLoader());
+
+        // MainWheatherInfo
+        if (in.readByte() == 0) {
+            main = null;
+        } else {
+            main = new MainWheatherInfo();
+            main.temp = in.readDouble();
+            main.humidity = in.readLong();
+            main.pressure = in.readDouble();
+            main.temp_max = in.readDouble();
+            main.temp_min = in.readDouble();
+        }
+
+        // SystemModel
+        if (in.readByte() == 0) {
+            sys = null;
+        } else {
+            sys = new SystemModel();
+            sys.country = in.readString();
+            sys.id = in.readLong();
+            sys.sunrise = in.readLong();
+            sys.sunset = in.readLong();
+            sys.type = in.readLong();
+            sys.message = in.readDouble();
+
+        }
+    }
+
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(name);
-        if (temp == null) {
+        dest.writeString(base);
+        if (id == null) {
             dest.writeByte((byte) 0);
         } else {
             dest.writeByte((byte) 1);
-            dest.writeInt(temp);
+            dest.writeLong(id);
         }
+        dest.writeString(name);
+        dest.writeInt(cod);
+        dest.writeLong(dt);
+        // for classes
+        // CoordModel
+        if (coord == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeFloat(coord.lat);
+            dest.writeFloat(coord.lon);
+        }
+
+        // List<WeatherModel>
+        dest.writeList(weather);
+
+        // MainWheatherInfo
+        if(main == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeDouble(main.temp);
+            dest.writeLong(main.humidity);
+            dest.writeDouble(main.pressure);
+            dest.writeDouble(main.temp_max);
+            dest.writeDouble(main.temp_min);
+        }
+
+        // SystemModel
+        if(sys == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeString(sys.country);
+            dest.writeLong(sys.id);
+            dest.writeLong(sys.sunrise);
+            dest.writeLong(sys.sunset);
+            dest.writeLong(sys.type);
+            dest.writeDouble(sys.message);
+        }
+    }
+
+    public String getTempC() {
+        return String.format("%.2f", main.temp) + " ℃";
     }
 }

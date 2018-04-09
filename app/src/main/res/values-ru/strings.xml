@@ -8,4 +8,15 @@
     <string name="favorites">Избранное</string>
     <string name="feedback">Обратная связь</string>
     <string name="about">О программе</string>
+
+    <string name="place_not_found">Извините, погодные данные не найдены.</string>
+    <string name="refresh">Обновить</string>
+
+    <string name="add_city">Добавить город</string>
+    <string name="add_city_dialog">Добавить город</string>
+
+    <string name="label_ok">Добавить</string>
+    <string name="menu_refresh">Обновить</string>
+    <string name="info_was_updated">Информация была обновлена</string>
+    <string name="city_already_exist">Город уже есть в списке</string>
 </resources>
