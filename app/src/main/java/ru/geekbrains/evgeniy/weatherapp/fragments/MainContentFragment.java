@@ -6,28 +6,24 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import ru.geekbrains.evgeniy.weatherapp.CustomElementsAdapter;
 import ru.geekbrains.evgeniy.weatherapp.R;
 import ru.geekbrains.evgeniy.weatherapp.WeatherDataLoader;
+import ru.geekbrains.evgeniy.weatherapp.data.WorkWithSharedPreferences;
 import ru.geekbrains.evgeniy.weatherapp.model.CityModel;
 import ru.geekbrains.evgeniy.weatherapp.model.CityModelArray;
 import ru.geekbrains.evgeniy.weatherapp.ui.AddCityDialog;
@@ -40,6 +36,8 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
     private CustomElementsAdapter adapter = null;
 
     private final String EXTRA_LIST = "list_classes";
+
+    public static final String SAVED_CITIES_ID = "SAVED_CITIES_ID";
 
     private final Handler handler = new Handler();
 
@@ -87,7 +85,7 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
         }
 
         if(adapter == null) {
-            updateWeathers(getString(R.string.default_cities));
+            updateWeathers(WorkWithSharedPreferences.getPropertyWithDecrypt(SAVED_CITIES_ID, getString(R.string.default_cities)));
         } else {
             recycleView.setAdapter(adapter);
         }

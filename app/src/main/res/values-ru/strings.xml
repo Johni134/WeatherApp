@@ -19,4 +19,5 @@
     <string name="menu_refresh">Обновить</string>
     <string name="info_was_updated">Информация была обновлена</string>
     <string name="city_already_exist">Город уже есть в списке</string>
+    <string name="toast_external_storage_not_found">Не нашли внешнее хранилище данных</string>
 </resources>

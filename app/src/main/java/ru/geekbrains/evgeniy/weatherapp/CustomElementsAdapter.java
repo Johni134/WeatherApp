@@ -14,7 +14,9 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import ru.geekbrains.evgeniy.weatherapp.data.WorkWithSharedPreferences;
 import ru.geekbrains.evgeniy.weatherapp.fragments.CityWeatherListener;
+import ru.geekbrains.evgeniy.weatherapp.fragments.MainContentFragment;
 import ru.geekbrains.evgeniy.weatherapp.model.CityModel;
 
 interface OnCustomAdapterClickListener{
@@ -51,7 +53,6 @@ public class CustomElementsAdapter extends RecyclerView.Adapter<CustomElementsAd
                 ids.add(String.valueOf(cm.id));
             }
             return StringUtils.join(ids, ",");
-
         }
     }
 
@@ -68,6 +69,7 @@ public class CustomElementsAdapter extends RecyclerView.Adapter<CustomElementsAd
     @Override
     public void removeView(int position) {
         dataSet.remove(position);
+        WorkWithSharedPreferences.savePropertyWithEncrypt(MainContentFragment.SAVED_CITIES_ID, getIDs());
         notifyItemRemoved(position);
     }
 
@@ -79,6 +81,8 @@ public class CustomElementsAdapter extends RecyclerView.Adapter<CustomElementsAd
     public void editView(int position) {
         CityModel cm = dataSet.get(position);
         cm.setName("Edited value");
+        // вдруг тут будем менять город
+        WorkWithSharedPreferences.savePropertyWithEncrypt(MainContentFragment.SAVED_CITIES_ID, getIDs());
         notifyItemChanged(position);
     }
 
@@ -89,6 +93,7 @@ public class CustomElementsAdapter extends RecyclerView.Adapter<CustomElementsAd
 
     public void addView(CityModel cityModel) {
         dataSet.add(cityModel);
+        WorkWithSharedPreferences.savePropertyWithEncrypt(MainContentFragment.SAVED_CITIES_ID, getIDs());
         notifyItemInserted(dataSet.size() - 1);
     }
 
@@ -104,6 +109,8 @@ public class CustomElementsAdapter extends RecyclerView.Adapter<CustomElementsAd
         dataSet.clear();
         notifyDataSetChanged();
     }
+
+
 
     public class CustomViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener,

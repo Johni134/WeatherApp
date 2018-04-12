@@ -37,4 +37,9 @@
     <string name="menu_refresh">Refresh</string>
     <string name="info_was_updated">Information was updated</string>
     <string name="city_already_exist">City already exist</string>
+    <string name="toast_external_storage_not_found">External storage not found</string>
+
+    <!-- for preferences -->
+    <string name="preference_file_key">ru.geekbrains.evgeniy.weatherapp.SHARED_PREF_KEY</string>
+
 </resources>

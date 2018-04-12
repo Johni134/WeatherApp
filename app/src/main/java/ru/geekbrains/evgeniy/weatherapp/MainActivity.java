@@ -1,5 +1,7 @@
 package ru.geekbrains.evgeniy.weatherapp;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -13,9 +15,13 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
 
 import java.util.ArrayList;
 
+import ru.geekbrains.evgeniy.weatherapp.data.WorkWithFiles;
+import ru.geekbrains.evgeniy.weatherapp.data.WorkWithSharedPreferences;
 import ru.geekbrains.evgeniy.weatherapp.fragments.AboutFragment;
 import ru.geekbrains.evgeniy.weatherapp.fragments.CityWeatherFragment;
 import ru.geekbrains.evgeniy.weatherapp.fragments.CityWeatherListener;
@@ -38,6 +44,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private final String EXTRA_MAIN_ARRAYLIST = "main_arraylist";
     private final String EXTRA_CITY_MODEL_KEY = "city_model_key";
 
+    private final String FILENAME = "avatar.png";
+
     private int navCheckedItem = R.id.nav_cities;
 
     @Override
@@ -59,6 +67,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         // init views
         initViews();
+
+        // work with files
+        if(!WorkWithFiles.fileExist(this, FILENAME)) {
+            Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.fallout);
+            WorkWithFiles.saveBitmapToFile(this, FILENAME, bm);
+        }
+        Bitmap bmFromFile = WorkWithFiles.loadBitmapFromFile(this, FILENAME);
+        if(bmFromFile != null) {
+            View header = navigationView.getHeaderView(0);
+            ImageView iv = header.findViewById(R.id.imageView);
+            iv.setImageBitmap(bmFromFile);
+        }
+
+        // init shared pref key
+        WorkWithSharedPreferences.initSharedPreferences(this);
 
         // saved instance
         if(savedInstanceState != null) {
