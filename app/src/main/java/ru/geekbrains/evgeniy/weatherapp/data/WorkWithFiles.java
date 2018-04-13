@@ -1,5 +1,6 @@
 package ru.geekbrains.evgeniy.weatherapp.data;
 
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,13 +10,15 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Objects;
 
 import ru.geekbrains.evgeniy.weatherapp.R;
+
 
 public class WorkWithFiles {
 
     public static boolean fileExist(Context context, String filename) {
-        File dir = new File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).getPath());
+        File dir = new File(Objects.requireNonNull(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)).getPath());
         if (!dir.exists()) {
             dir.mkdirs();
         }
@@ -36,14 +39,17 @@ public class WorkWithFiles {
         try {
             out = new FileOutputStream(file);
             bmp.compress(Bitmap.CompressFormat.PNG, 100, out);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
-        } finally {
+        }
+        finally {
             try {
                 if (out != null) {
                     out.close();
                 }
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 e.printStackTrace();
             }
         }
@@ -67,20 +73,14 @@ public class WorkWithFiles {
     // проверим доступен ли external storage для записи/чтения
     private static boolean isExternalStorageWritable() {
         String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            return true;
-        }
-        return false;
+        return Environment.MEDIA_MOUNTED.equals(state);
     }
 
     // проверим доступен ли external storage для чтения
-    public static boolean isExternalStorageReadable() {
+    private static boolean isExternalStorageReadable() {
         String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state) ||
-                Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
-            return true;
-        }
-        return false;
+        return Environment.MEDIA_MOUNTED.equals(state) ||
+               Environment.MEDIA_MOUNTED_READ_ONLY.equals(state);
     }
 
     private static void showToast(Context context, CharSequence toastMessage) {

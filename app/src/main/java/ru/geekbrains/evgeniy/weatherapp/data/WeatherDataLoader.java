@@ -1,4 +1,4 @@
-package ru.geekbrains.evgeniy.weatherapp;
+package ru.geekbrains.evgeniy.weatherapp.data;
 
 
 import android.content.Context;
@@ -6,18 +6,15 @@ import android.content.Context;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import ru.geekbrains.evgeniy.weatherapp.model.CityModelArray;
+import ru.geekbrains.evgeniy.weatherapp.R;
 import ru.geekbrains.evgeniy.weatherapp.model.CityModel;
+import ru.geekbrains.evgeniy.weatherapp.model.CityModelArray;
 
 
 /**
@@ -57,7 +54,8 @@ public class WeatherDataLoader {
         try {
             Response response = okHttpClient.newCall(request).execute();
             return response.body().string();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
             return null;
         }
@@ -100,7 +98,6 @@ public class WeatherDataLoader {
             return null;
         }
         return model;
-
     }
 
     public static CityModel getWeatherByID(Context context, String id) {
@@ -133,5 +130,4 @@ public class WeatherDataLoader {
         }
         return cityModelArray;
     }
-
 }

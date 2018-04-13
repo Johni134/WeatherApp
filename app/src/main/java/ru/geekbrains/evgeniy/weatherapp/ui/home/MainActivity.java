@@ -1,4 +1,5 @@
-package ru.geekbrains.evgeniy.weatherapp;
+package ru.geekbrains.evgeniy.weatherapp.ui.home;
+
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -20,14 +21,16 @@ import android.widget.ImageView;
 
 import java.util.ArrayList;
 
+import ru.geekbrains.evgeniy.weatherapp.R;
 import ru.geekbrains.evgeniy.weatherapp.data.WorkWithFiles;
 import ru.geekbrains.evgeniy.weatherapp.data.WorkWithSharedPreferences;
-import ru.geekbrains.evgeniy.weatherapp.fragments.AboutFragment;
-import ru.geekbrains.evgeniy.weatherapp.fragments.CityWeatherFragment;
-import ru.geekbrains.evgeniy.weatherapp.fragments.CityWeatherListener;
-import ru.geekbrains.evgeniy.weatherapp.fragments.MainContentFragment;
+import ru.geekbrains.evgeniy.weatherapp.ui.fragments.AboutFragment;
+import ru.geekbrains.evgeniy.weatherapp.ui.fragments.CityWeatherFragment;
+import ru.geekbrains.evgeniy.weatherapp.ui.fragments.CityWeatherListener;
+import ru.geekbrains.evgeniy.weatherapp.ui.fragments.MainContentFragment;
 import ru.geekbrains.evgeniy.weatherapp.model.CityModel;
 import ru.geekbrains.evgeniy.weatherapp.ui.dialogs.AddCityDialogListener;
+
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, AddCityDialogListener, CityWeatherListener {
 
@@ -69,12 +72,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         initViews();
 
         // work with files
-        if(!WorkWithFiles.fileExist(this, FILENAME)) {
+        if (!WorkWithFiles.fileExist(this, FILENAME)) {
             Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.fallout);
             WorkWithFiles.saveBitmapToFile(this, FILENAME, bm);
         }
         Bitmap bmFromFile = WorkWithFiles.loadBitmapFromFile(this, FILENAME);
-        if(bmFromFile != null) {
+        if (bmFromFile != null) {
             View header = navigationView.getHeaderView(0);
             ImageView iv = header.findViewById(R.id.imageView);
             iv.setImageBitmap(bmFromFile);
@@ -84,19 +87,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         WorkWithSharedPreferences.initSharedPreferences(this);
 
         // saved instance
-        if(savedInstanceState != null) {
-            if(savedInstanceState.containsKey(EXTRA_MAIN_ARRAYLIST)) {
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(EXTRA_MAIN_ARRAYLIST)) {
                 mainContentFragment = new MainContentFragment();
                 mainContentFragment.setList(savedInstanceState.<CityModel>getParcelableArrayList(EXTRA_MAIN_ARRAYLIST));
             }
-            if(savedInstanceState.containsKey(EXTRA_CITY_MODEL_KEY)) {
+            if (savedInstanceState.containsKey(EXTRA_CITY_MODEL_KEY)) {
                 cityWeatherFragment = new CityWeatherFragment();
                 cityWeatherFragment.setCityModel((CityModel) savedInstanceState.getParcelable(EXTRA_CITY_MODEL_KEY));
             }
             navCheckedItem = savedInstanceState.getInt(EXTRA_CURRENT_CHECKED_NAV_ITEM);
         }
         onNavigationItemSelected(navigationView.getMenu().findItem(navCheckedItem));
-        if(cityWeatherFragment != null) {
+        if (cityWeatherFragment != null) {
             showCityWeather(cityWeatherFragment.getCityModel());
         }
     }
@@ -148,7 +151,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else {
+        }
+        else {
             super.onBackPressed();
         }
     }
@@ -168,14 +172,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onAddCity(String city) {
-        if(mainContentFragment != null) {
+        if (mainContentFragment != null) {
             mainContentFragment.onAddCity(city);
         }
     }
 
     @Override
     public void showCityWeather(CityModel cityModel) {
-        if(cityWeatherFragment == null)
+        if (cityWeatherFragment == null)
             cityWeatherFragment = new CityWeatherFragment();
         cityWeatherFragment.setCityModel(cityModel);
 

@@ -1,5 +1,6 @@
 package ru.geekbrains.evgeniy.weatherapp.model;
 
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -7,6 +8,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class CityModel implements Parcelable {
 
@@ -38,6 +40,7 @@ public class CityModel implements Parcelable {
     }
 
     public static final Creator<CityModel> CREATOR = new Creator<CityModel>() {
+
         @Override
         public CityModel createFromParcel(Parcel in) {
             return new CityModel(in);
@@ -58,7 +61,8 @@ public class CityModel implements Parcelable {
         base = in.readString();
         if (in.readByte() == 0) {
             id = null;
-        } else {
+        }
+        else {
             id = in.readLong();
         }
         name = in.readString();
@@ -68,7 +72,8 @@ public class CityModel implements Parcelable {
         // CoordModel
         if (in.readByte() == 0) {
             coord = null;
-        } else {
+        }
+        else {
             coord = new CoordModel();
             coord.lat = in.readFloat();
             coord.lon = in.readFloat();
@@ -79,7 +84,8 @@ public class CityModel implements Parcelable {
         // MainWheatherInfo
         if (in.readByte() == 0) {
             main = null;
-        } else {
+        }
+        else {
             main = new MainWheatherInfo();
             main.temp = in.readDouble();
             main.humidity = in.readLong();
@@ -91,7 +97,8 @@ public class CityModel implements Parcelable {
         // SystemModel
         if (in.readByte() == 0) {
             sys = null;
-        } else {
+        }
+        else {
             sys = new SystemModel();
             sys.country = in.readString();
             sys.id = in.readLong();
@@ -99,7 +106,6 @@ public class CityModel implements Parcelable {
             sys.sunset = in.readLong();
             sys.type = in.readLong();
             sys.message = in.readDouble();
-
         }
     }
 
@@ -108,7 +114,8 @@ public class CityModel implements Parcelable {
         dest.writeString(base);
         if (id == null) {
             dest.writeByte((byte) 0);
-        } else {
+        }
+        else {
             dest.writeByte((byte) 1);
             dest.writeLong(id);
         }
@@ -119,7 +126,8 @@ public class CityModel implements Parcelable {
         // CoordModel
         if (coord == null) {
             dest.writeByte((byte) 0);
-        } else {
+        }
+        else {
             dest.writeByte((byte) 1);
             dest.writeFloat(coord.lat);
             dest.writeFloat(coord.lon);
@@ -129,9 +137,10 @@ public class CityModel implements Parcelable {
         dest.writeList(weather);
 
         // MainWheatherInfo
-        if(main == null) {
+        if (main == null) {
             dest.writeByte((byte) 0);
-        } else {
+        }
+        else {
             dest.writeByte((byte) 1);
             dest.writeDouble(main.temp);
             dest.writeLong(main.humidity);
@@ -141,9 +150,10 @@ public class CityModel implements Parcelable {
         }
 
         // SystemModel
-        if(sys == null) {
+        if (sys == null) {
             dest.writeByte((byte) 0);
-        } else {
+        }
+        else {
             dest.writeByte((byte) 1);
             dest.writeString(sys.country);
             dest.writeLong(sys.id);

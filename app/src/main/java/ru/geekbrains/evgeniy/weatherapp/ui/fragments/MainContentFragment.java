@@ -1,4 +1,5 @@
-package ru.geekbrains.evgeniy.weatherapp.fragments;
+package ru.geekbrains.evgeniy.weatherapp.ui.fragments;
+
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,17 +18,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.geekbrains.evgeniy.weatherapp.CustomElementsAdapter;
+import ru.geekbrains.evgeniy.weatherapp.ui.home.adapters.CustomElementsAdapter;
 import ru.geekbrains.evgeniy.weatherapp.R;
-import ru.geekbrains.evgeniy.weatherapp.WeatherDataLoader;
+import ru.geekbrains.evgeniy.weatherapp.data.WeatherDataLoader;
 import ru.geekbrains.evgeniy.weatherapp.data.WorkWithSharedPreferences;
 import ru.geekbrains.evgeniy.weatherapp.model.CityModel;
 import ru.geekbrains.evgeniy.weatherapp.model.CityModelArray;
-import ru.geekbrains.evgeniy.weatherapp.ui.AddCityDialog;
+import ru.geekbrains.evgeniy.weatherapp.ui.dialogs.AddCityDialog;
 import ru.geekbrains.evgeniy.weatherapp.ui.dialogs.AddCityDialogListener;
+
 
 public class MainContentFragment extends Fragment implements View.OnClickListener, AddCityDialogListener {
 
@@ -76,17 +79,18 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
         initViews(view);
         addItemTouchCallback();
 
-        if(savedInstanceState != null) {
+        if (savedInstanceState != null) {
             adapter = new CustomElementsAdapter(savedInstanceState.<CityModel>getParcelableArrayList(EXTRA_LIST));
         }
 
-        if(list != null && adapter == null) {
+        if (list != null && adapter == null) {
             adapter = new CustomElementsAdapter(list);
         }
 
-        if(adapter == null) {
+        if (adapter == null) {
             updateWeathers(WorkWithSharedPreferences.getPropertyWithDecrypt(SAVED_CITIES_ID, getString(R.string.default_cities)));
-        } else {
+        }
+        else {
             recycleView.setAdapter(adapter);
         }
 
@@ -95,18 +99,22 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
 
     private void updateWeathers(final String ids) {
         new Thread() {
+
             public void run() {
                 final CityModelArray cityModelArray = WeatherDataLoader.getListWeatherByIDs(getContext(), ids);
-                if(cityModelArray == null) {
+                if (cityModelArray == null) {
                     handler.post(new Runnable() {
+
                         @Override
                         public void run() {
                             Toast.makeText(getContext(), getString(R.string.place_not_found),
                                     Toast.LENGTH_LONG).show();
                         }
                     });
-                } else {
+                }
+                else {
                     handler.post(new Runnable() {
+
                         @Override
                         public void run() {
                             boolean isUpdating = (recycleView.getAdapter() != null);
@@ -131,7 +139,8 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
     }
 
     private void addItemTouchCallback() {
-        ItemTouchHelper.SimpleCallback  simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
                 return false;
@@ -181,27 +190,32 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
 
     private void addCity(final String city) {
         new Thread() {//Отдельный поток для получения новых данных в фоне
+
             public void run() {
                 final CityModel model = WeatherDataLoader.getWeatherByCity(getActivity(), city);
                 // Вызов методов напрямую может вызвать runtime error
                 // Мы не можем напрямую обновить UI, поэтому используем handler, чтобы обновить интерфейс в главном потоке.
                 if (model == null) {
                     handler.post(new Runnable() {
+
                         public void run() {
                             Toast.makeText(getActivity(), getString(R.string.place_not_found),
                                     Toast.LENGTH_LONG).show();
                         }
                     });
-                } else {
+                }
+                else {
                     handler.post(new Runnable() {
+
                         public void run() {
-                            if(adapter.alreadyExist(model)) {
+                            if (adapter.alreadyExist(model)) {
                                 Toast.makeText(getActivity(), getString(R.string.city_already_exist)
-                                                + " ("
-                                                + model.getName()
-                                                + ")",
+                                                              + " ("
+                                                              + model.getName()
+                                                              + ")",
                                         Toast.LENGTH_LONG).show();
-                            } else {
+                            }
+                            else {
                                 adapter.addView(model);
                             }
                         }

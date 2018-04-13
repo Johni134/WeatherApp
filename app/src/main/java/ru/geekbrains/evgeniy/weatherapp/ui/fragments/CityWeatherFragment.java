@@ -1,4 +1,5 @@
-package ru.geekbrains.evgeniy.weatherapp.fragments;
+package ru.geekbrains.evgeniy.weatherapp.ui.fragments;
+
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,8 +20,9 @@ import java.util.Date;
 import java.util.Locale;
 
 import ru.geekbrains.evgeniy.weatherapp.R;
-import ru.geekbrains.evgeniy.weatherapp.WeatherDataLoader;
+import ru.geekbrains.evgeniy.weatherapp.data.WeatherDataLoader;
 import ru.geekbrains.evgeniy.weatherapp.model.CityModel;
+
 
 public class CityWeatherFragment extends Fragment {
 
@@ -43,7 +45,7 @@ public class CityWeatherFragment extends Fragment {
 
         initViews(view);
 
-        if(savedInstanceState != null) {
+        if (savedInstanceState != null) {
             currentCityModel = savedInstanceState.getParcelable(EXTRA_CITY_MODEL_KEY);
         }
 
@@ -87,19 +89,23 @@ public class CityWeatherFragment extends Fragment {
     //Обновление/загрузка погодных данных
     private void updateWeatherData() {
         new Thread() {//Отдельный поток для получения новых данных в фоне
+
             public void run() {
                 final CityModel model = WeatherDataLoader.getWeatherByID(getActivity(), currentCityModel.id.toString());
                 // Вызов методов напрямую может вызвать runtime error
                 // Мы не можем напрямую обновить UI, поэтому используем handler, чтобы обновить интерфейс в главном потоке.
                 if (model == null) {
                     handler.post(new Runnable() {
+
                         public void run() {
                             Toast.makeText(getActivity(), getString(R.string.place_not_found),
                                     Toast.LENGTH_LONG).show();
                         }
                     });
-                } else {
+                }
+                else {
                     handler.post(new Runnable() {
+
                         public void run() {
                             renderWeather(model);
                         }
@@ -116,12 +122,12 @@ public class CityWeatherFragment extends Fragment {
             String description = "";
             long id = 0;
 
-            if(model.weather.size() != 0){
+            if (model.weather.size() != 0) {
                 description = model.weather.get(0).description.toUpperCase(Locale.US);
-                id =model.weather.get(0).id;
+                id = model.weather.get(0).id;
             }
             detailsTextView.setText(description + "\n" + "Humidity: "
-                    + model.main.humidity + "%" + "\n" + "Pressure: " + model.main.pressure + " hPa");
+                                    + model.main.humidity + "%" + "\n" + "Pressure: " + model.main.pressure + " hPa");
 
             currentTemperatureTextView.setText(model.getTempC());
 
@@ -131,8 +137,8 @@ public class CityWeatherFragment extends Fragment {
 
             setWeatherIcon(id, model.sys.sunrise * 1000,
                     model.sys.sunset * 1000);
-
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -144,11 +150,13 @@ public class CityWeatherFragment extends Fragment {
             long currentTime = new Date().getTime();
             if (currentTime >= sunrise && currentTime < sunset) {
                 icon = getString(R.string.weather_sunny);
-            } else {
+            }
+            else {
                 icon = getString(R.string.weather_clear_night);
             }
-        } else {
-            switch ((int)id) {
+        }
+        else {
+            switch ((int) id) {
                 case 2:
                     icon = getString(R.string.weather_thunder);
                     break;

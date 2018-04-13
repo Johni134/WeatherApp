@@ -1,4 +1,4 @@
-package ru.geekbrains.evgeniy.weatherapp.ui;
+package ru.geekbrains.evgeniy.weatherapp.ui.dialogs;
 
 
 import android.app.AlertDialog;
@@ -13,8 +13,6 @@ import android.util.TypedValue;
 import android.widget.EditText;
 
 import ru.geekbrains.evgeniy.weatherapp.R;
-import ru.geekbrains.evgeniy.weatherapp.ui.dialogs.AddCityDialogListener;
-
 
 ///////////////////////////////////////////////////////////////////////////
 // Add City Dialog
@@ -34,9 +32,10 @@ public class AddCityDialog extends DialogFragment {
         input.setInputType(InputType.TYPE_CLASS_TEXT);
         builder.setView(input);
         builder.setPositiveButton(R.string.label_ok, new DialogInterface.OnClickListener() {
+
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                ((AddCityDialogListener)getActivity()).onAddCity(input.getText().toString());
+                ((AddCityDialogListener) getActivity()).onAddCity(input.getText().toString());
             }
         });
         return builder.create();

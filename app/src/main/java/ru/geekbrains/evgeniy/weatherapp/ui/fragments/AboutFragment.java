@@ -1,4 +1,5 @@
-package ru.geekbrains.evgeniy.weatherapp.fragments;
+package ru.geekbrains.evgeniy.weatherapp.ui.fragments;
+
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,6 +12,7 @@ import android.view.ViewGroup;
 import ru.geekbrains.evgeniy.weatherapp.R;
 
 public class AboutFragment extends Fragment {
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

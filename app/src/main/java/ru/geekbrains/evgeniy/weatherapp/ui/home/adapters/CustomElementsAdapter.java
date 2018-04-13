@@ -1,4 +1,4 @@
-package ru.geekbrains.evgeniy.weatherapp;
+package ru.geekbrains.evgeniy.weatherapp.ui.home.adapters;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.PopupMenu;
@@ -14,9 +14,10 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import ru.geekbrains.evgeniy.weatherapp.R;
 import ru.geekbrains.evgeniy.weatherapp.data.WorkWithSharedPreferences;
-import ru.geekbrains.evgeniy.weatherapp.fragments.CityWeatherListener;
-import ru.geekbrains.evgeniy.weatherapp.fragments.MainContentFragment;
+import ru.geekbrains.evgeniy.weatherapp.ui.fragments.CityWeatherListener;
+import ru.geekbrains.evgeniy.weatherapp.ui.fragments.MainContentFragment;
 import ru.geekbrains.evgeniy.weatherapp.model.CityModel;
 
 interface OnCustomAdapterClickListener{

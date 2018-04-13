@@ -1,10 +1,12 @@
 package ru.geekbrains.evgeniy.weatherapp.data;
 
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Base64;
 
 import ru.geekbrains.evgeniy.weatherapp.R;
+
 
 public class WorkWithSharedPreferences {
 

@@ -1,6 +1,8 @@
 package ru.geekbrains.evgeniy.weatherapp.model;
 
+
 import com.google.gson.annotations.SerializedName;
+
 
 public class MainWheatherInfo {
 
@@ -11,5 +13,4 @@ public class MainWheatherInfo {
     public long humidity;
     public Double temp_min;
     public Double temp_max;
-
 }

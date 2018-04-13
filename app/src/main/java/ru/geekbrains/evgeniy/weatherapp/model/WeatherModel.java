@@ -1,5 +1,6 @@
 package ru.geekbrains.evgeniy.weatherapp.model;
 
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -17,6 +18,7 @@ public class WeatherModel implements Parcelable {
     }
 
     public static final Creator<WeatherModel> CREATOR = new Creator<WeatherModel>() {
+
         @Override
         public WeatherModel createFromParcel(Parcel in) {
             return new WeatherModel(in);
