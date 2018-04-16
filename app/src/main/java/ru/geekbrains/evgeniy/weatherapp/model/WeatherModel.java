@@ -4,11 +4,16 @@ package ru.geekbrains.evgeniy.weatherapp.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class WeatherModel implements Parcelable {
+import io.realm.RealmObject;
+
+public class WeatherModel extends RealmObject implements Parcelable {
     public long id;
     public String main;
     public String description;
     public String icon;
+
+    public WeatherModel() {
+    }
 
     protected WeatherModel(Parcel in) {
         id = in.readLong();

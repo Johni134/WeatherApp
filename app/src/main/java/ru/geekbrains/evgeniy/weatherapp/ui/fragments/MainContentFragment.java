@@ -22,10 +22,12 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.Realm;
+import io.realm.RealmResults;
+import ru.geekbrains.evgeniy.weatherapp.data.DataHelper;
 import ru.geekbrains.evgeniy.weatherapp.ui.home.adapters.CustomElementsAdapter;
 import ru.geekbrains.evgeniy.weatherapp.R;
 import ru.geekbrains.evgeniy.weatherapp.data.WeatherDataLoader;
-import ru.geekbrains.evgeniy.weatherapp.data.WorkWithSharedPreferences;
 import ru.geekbrains.evgeniy.weatherapp.model.CityModel;
 import ru.geekbrains.evgeniy.weatherapp.model.CityModelArray;
 import ru.geekbrains.evgeniy.weatherapp.ui.dialogs.AddCityDialog;
@@ -45,6 +47,8 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
     private final Handler handler = new Handler();
 
     private List<CityModel> list = null;
+
+    private Realm realm;
 
     // options menu
     @Override
@@ -66,6 +70,10 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
         }
     }
 
+    public void setRealm(Realm realm) {
+        this.realm = realm;
+    }
+
     // on create view
     @Nullable
     @Override
@@ -79,18 +87,13 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
         initViews(view);
         addItemTouchCallback();
 
-        if (savedInstanceState != null) {
-            adapter = new CustomElementsAdapter(savedInstanceState.<CityModel>getParcelableArrayList(EXTRA_LIST));
-        }
-
-        if (list != null && adapter == null) {
-            adapter = new CustomElementsAdapter(list);
-        }
-
-        if (adapter == null) {
-            updateWeathers(WorkWithSharedPreferences.getPropertyWithDecrypt(SAVED_CITIES_ID, getString(R.string.default_cities)));
+        // realm ini
+        RealmResults<CityModel> realmResults = realm.where(CityModel.class).findAll();
+        if(realmResults.size() == 0) {
+            updateWeathers(getString(R.string.default_cities));
         }
         else {
+            adapter = new CustomElementsAdapter(realmResults);
             recycleView.setAdapter(adapter);
         }
 
@@ -114,16 +117,14 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
                 }
                 else {
                     handler.post(new Runnable() {
-
                         @Override
                         public void run() {
-                            boolean isUpdating = (recycleView.getAdapter() != null);
-                            adapter = new CustomElementsAdapter(cityModelArray.list);
-                            recycleView.setAdapter(adapter);
-                            if (isUpdating) {
-                                Toast.makeText(getContext(), getString(R.string.info_was_updated),
-                                        Toast.LENGTH_LONG).show();
+                            for (CityModel cm: cityModelArray.list) {
+                                DataHelper.createOrUpdateFromObject(realm, cm);
                             }
+                            RealmResults<CityModel> realmResults = realm.where(CityModel.class).findAll();
+                            adapter = new CustomElementsAdapter(realmResults);
+                            recycleView.setAdapter(adapter);
                         }
                     });
                 }
@@ -148,7 +149,8 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                adapter.removeView(viewHolder.getAdapterPosition());
+                final CityModel cm = adapter.getItem(viewHolder.getAdapterPosition());
+                DataHelper.deleteObject(realm, cm);
             }
         };
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
@@ -168,7 +170,6 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList(EXTRA_LIST, (ArrayList<? extends Parcelable>) adapter.getList());
     }
 
     public List<CityModel> getList() {
@@ -216,12 +217,18 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
                                         Toast.LENGTH_LONG).show();
                             }
                             else {
-                                adapter.addView(model);
+                                DataHelper.createOrUpdateFromObject(realm, model);
                             }
                         }
                     });
                 }
             }
         }.start();
+    }
+
+    @Override
+    public void onDestroyView() {
+        recycleView.setAdapter(null);
+        super.onDestroyView();
     }
 }

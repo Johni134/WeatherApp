@@ -1,6 +1,8 @@
 package ru.geekbrains.evgeniy.weatherapp.model;
 
-public class SystemModel {
+import io.realm.RealmObject;
+
+public class SystemModel extends RealmObject {
     public long type;
     public long id;
     public double message;

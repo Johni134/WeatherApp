@@ -3,8 +3,10 @@ package ru.geekbrains.evgeniy.weatherapp.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import io.realm.RealmObject;
 
-public class MainWheatherInfo {
+
+public class MainWheatherInfo extends RealmObject {
 
     @SerializedName("temp")
     public Double temp;

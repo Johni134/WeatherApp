@@ -14,6 +14,8 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.OrderedRealmCollection;
+import io.realm.RealmRecyclerViewAdapter;
 import ru.geekbrains.evgeniy.weatherapp.R;
 import ru.geekbrains.evgeniy.weatherapp.data.WorkWithSharedPreferences;
 import ru.geekbrains.evgeniy.weatherapp.ui.fragments.CityWeatherListener;
@@ -26,13 +28,15 @@ interface OnCustomAdapterClickListener{
     void showDetailView(int position);
 }
 
-public class CustomElementsAdapter extends RecyclerView.Adapter<CustomElementsAdapter.CustomViewHolder> implements OnCustomAdapterClickListener{
+public class CustomElementsAdapter extends RealmRecyclerViewAdapter<CityModel, CustomElementsAdapter.CustomViewHolder> implements OnCustomAdapterClickListener{
 
-    private List<CityModel> dataSet;
+    private OrderedRealmCollection<CityModel> dataSet;
     private ViewGroup viewGroup;
 
-    public CustomElementsAdapter(List<CityModel> dataSet) {
+    public CustomElementsAdapter(OrderedRealmCollection<CityModel> dataSet) {
+        super(dataSet, true);
         this.dataSet = dataSet;
+        setHasStableIds(true);
     }
 
     @NonNull
@@ -69,8 +73,8 @@ public class CustomElementsAdapter extends RecyclerView.Adapter<CustomElementsAd
 
     @Override
     public void removeView(int position) {
-        dataSet.remove(position);
-        WorkWithSharedPreferences.savePropertyWithEncrypt(MainContentFragment.SAVED_CITIES_ID, getIDs());
+        //dataSet.remove(position);
+        //WorkWithSharedPreferences.savePropertyWithEncrypt(MainContentFragment.SAVED_CITIES_ID, getIDs());
         notifyItemRemoved(position);
     }
 
@@ -83,7 +87,7 @@ public class CustomElementsAdapter extends RecyclerView.Adapter<CustomElementsAd
         CityModel cm = dataSet.get(position);
         cm.setName("Edited value");
         // вдруг тут будем менять город
-        WorkWithSharedPreferences.savePropertyWithEncrypt(MainContentFragment.SAVED_CITIES_ID, getIDs());
+        //WorkWithSharedPreferences.savePropertyWithEncrypt(MainContentFragment.SAVED_CITIES_ID, getIDs());
         notifyItemChanged(position);
     }
 
@@ -94,7 +98,7 @@ public class CustomElementsAdapter extends RecyclerView.Adapter<CustomElementsAd
 
     public void addView(CityModel cityModel) {
         dataSet.add(cityModel);
-        WorkWithSharedPreferences.savePropertyWithEncrypt(MainContentFragment.SAVED_CITIES_ID, getIDs());
+        //WorkWithSharedPreferences.savePropertyWithEncrypt(MainContentFragment.SAVED_CITIES_ID, getIDs());
         notifyItemInserted(dataSet.size() - 1);
     }
 

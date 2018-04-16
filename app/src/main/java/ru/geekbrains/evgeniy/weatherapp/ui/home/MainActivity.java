@@ -21,6 +21,7 @@ import android.widget.ImageView;
 
 import java.util.ArrayList;
 
+import io.realm.Realm;
 import ru.geekbrains.evgeniy.weatherapp.R;
 import ru.geekbrains.evgeniy.weatherapp.data.WorkWithFiles;
 import ru.geekbrains.evgeniy.weatherapp.data.WorkWithSharedPreferences;
@@ -51,6 +52,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private int navCheckedItem = R.id.nav_cities;
 
+    private Realm realm;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +62,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // init toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        // get realm instance
+        realm = Realm.getDefaultInstance();
 
         // init drawer
         drawer = findViewById(R.id.drawer_layout);
@@ -88,10 +94,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         // saved instance
         if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(EXTRA_MAIN_ARRAYLIST)) {
-                mainContentFragment = new MainContentFragment();
-                mainContentFragment.setList(savedInstanceState.<CityModel>getParcelableArrayList(EXTRA_MAIN_ARRAYLIST));
-            }
             if (savedInstanceState.containsKey(EXTRA_CITY_MODEL_KEY)) {
                 cityWeatherFragment = new CityWeatherFragment();
                 cityWeatherFragment.setCityModel((CityModel) savedInstanceState.getParcelable(EXTRA_CITY_MODEL_KEY));
@@ -122,8 +124,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 setNewScreen(aboutFragment);
                 break;
             case R.id.nav_cities:
-                if (mainContentFragment == null)
+                if (mainContentFragment == null) {
                     mainContentFragment = new MainContentFragment();
+                    mainContentFragment.setRealm(realm);
+                }
                 setNewScreen(mainContentFragment);
                 break;
             case R.id.nav_favorites:
@@ -161,9 +165,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        if (mainContentFragment != null) {
-            outState.putParcelableArrayList(EXTRA_MAIN_ARRAYLIST, (ArrayList<? extends Parcelable>) mainContentFragment.getList());
-        }
         if (cityWeatherFragment != null && cityWeatherFragment.isVisible()) {
             outState.putParcelable(EXTRA_CITY_MODEL_KEY, cityWeatherFragment.getCityModel());
         }
@@ -187,5 +188,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fragmentTransaction.replace(R.id.content, cityWeatherFragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        realm.close();
     }
 }

@@ -6,15 +6,20 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.ArrayList;
-import java.util.List;
+import io.realm.RealmList;
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 
-public class CityModel implements Parcelable {
+public class CityModel extends RealmObject implements Parcelable {
+
+    public static final String FIELD_ID = "id";
 
     public CoordModel coord;
-    public List<WeatherModel> weather = new ArrayList<>();
+    public RealmList<WeatherModel> weather = new RealmList<>();
     public String base;
+
+    @PrimaryKey
     public Long id;
 
     public int cod;
@@ -25,10 +30,7 @@ public class CityModel implements Parcelable {
     @SerializedName("name")
     private String name;
 
-    public CityModel(String name) {
-        this.name = name;
-        main = new MainWheatherInfo();
-        main.temp = Math.random() * 100 - 50;
+    public CityModel() {
     }
 
     public String getName() {
