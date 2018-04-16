@@ -13,12 +13,17 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 
 import io.realm.OrderedRealmCollection;
+import io.realm.Realm;
 import io.realm.RealmRecyclerViewAdapter;
 import ru.geekbrains.evgeniy.weatherapp.R;
+import ru.geekbrains.evgeniy.weatherapp.data.DataHelper;
 import ru.geekbrains.evgeniy.weatherapp.data.WorkWithSharedPreferences;
 import ru.geekbrains.evgeniy.weatherapp.ui.fragments.CityWeatherListener;
+import ru.geekbrains.evgeniy.weatherapp.ui.fragments.DeleteCityListener;
 import ru.geekbrains.evgeniy.weatherapp.ui.fragments.MainContentFragment;
 import ru.geekbrains.evgeniy.weatherapp.model.CityModel;
 
@@ -73,9 +78,7 @@ public class CustomElementsAdapter extends RealmRecyclerViewAdapter<CityModel, C
 
     @Override
     public void removeView(int position) {
-        //dataSet.remove(position);
-        //WorkWithSharedPreferences.savePropertyWithEncrypt(MainContentFragment.SAVED_CITIES_ID, getIDs());
-        notifyItemRemoved(position);
+        ((DeleteCityListener) viewGroup.getContext()).onDeleteCity(dataSet.get(position));
     }
 
     public List<CityModel> getList() {

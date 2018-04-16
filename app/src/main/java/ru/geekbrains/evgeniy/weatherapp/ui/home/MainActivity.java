@@ -28,12 +28,13 @@ import ru.geekbrains.evgeniy.weatherapp.data.WorkWithSharedPreferences;
 import ru.geekbrains.evgeniy.weatherapp.ui.fragments.AboutFragment;
 import ru.geekbrains.evgeniy.weatherapp.ui.fragments.CityWeatherFragment;
 import ru.geekbrains.evgeniy.weatherapp.ui.fragments.CityWeatherListener;
+import ru.geekbrains.evgeniy.weatherapp.ui.fragments.DeleteCityListener;
 import ru.geekbrains.evgeniy.weatherapp.ui.fragments.MainContentFragment;
 import ru.geekbrains.evgeniy.weatherapp.model.CityModel;
 import ru.geekbrains.evgeniy.weatherapp.ui.dialogs.AddCityDialogListener;
 
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, AddCityDialogListener, CityWeatherListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, AddCityDialogListener, CityWeatherListener, DeleteCityListener {
 
     private NavigationView navigationView;
     private DrawerLayout drawer;
@@ -194,5 +195,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onDestroy() {
         super.onDestroy();
         realm.close();
+    }
+
+    @Override
+    public void onDeleteCity(CityModel cityModel) {
+        if (mainContentFragment != null) {
+            mainContentFragment.onDeleteCity(cityModel);
+        }
     }
 }

@@ -34,7 +34,7 @@ import ru.geekbrains.evgeniy.weatherapp.ui.dialogs.AddCityDialog;
 import ru.geekbrains.evgeniy.weatherapp.ui.dialogs.AddCityDialogListener;
 
 
-public class MainContentFragment extends Fragment implements View.OnClickListener, AddCityDialogListener {
+public class MainContentFragment extends Fragment implements View.OnClickListener, AddCityDialogListener, DeleteCityListener {
 
     private FloatingActionButton addView;
     private RecyclerView recycleView;
@@ -65,6 +65,7 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
                 return true;
             case R.id.menu_refresh:
                 updateWeathers(adapter.getIDs());
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -122,9 +123,11 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
                             for (CityModel cm: cityModelArray.list) {
                                 DataHelper.createOrUpdateFromObject(realm, cm);
                             }
-                            RealmResults<CityModel> realmResults = realm.where(CityModel.class).findAll();
-                            adapter = new CustomElementsAdapter(realmResults);
-                            recycleView.setAdapter(adapter);
+                            if(adapter == null) {
+                                RealmResults<CityModel> realmResults = realm.where(CityModel.class).findAll();
+                                adapter = new CustomElementsAdapter(realmResults);
+                                recycleView.setAdapter(adapter);
+                            }
                         }
                     });
                 }
@@ -149,8 +152,8 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                final CityModel cm = adapter.getItem(viewHolder.getAdapterPosition());
-                DataHelper.deleteObject(realm, cm);
+                CityModel cm = adapter.getItem(viewHolder.getAdapterPosition());
+                onDeleteCity(cm);
             }
         };
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
@@ -188,6 +191,8 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
     public void onAddCity(String city) {
         addCity(city);
     }
+
+
 
     private void addCity(final String city) {
         new Thread() {//Отдельный поток для получения новых данных в фоне
@@ -230,5 +235,38 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
     public void onDestroyView() {
         recycleView.setAdapter(null);
         super.onDestroyView();
+    }
+
+    @Override
+    public void onDeleteCity(CityModel cityModel) {
+        deleteCity(cityModel);
+    }
+
+    private void deleteCity(final CityModel cityModel) {
+        new Thread() {//Отдельный поток для получения новых данных в фоне
+
+            public void run() {
+                // Вызов методов напрямую может вызвать runtime error
+                // Мы не можем напрямую обновить UI, поэтому используем handler, чтобы обновить интерфейс в главном потоке.
+                if (cityModel == null) {
+                    handler.post(new Runnable() {
+
+                        public void run() {
+                            Toast.makeText(getActivity(), getString(R.string.place_not_found),
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+                else {
+                    handler.post(new Runnable() {
+
+                        public void run() {
+                            DataHelper.deleteObject(realm, cityModel);
+                        }
+                    });
+                }
+            }
+        }.start();
+
     }
 }

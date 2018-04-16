@@ -9,7 +9,7 @@ public class DataHelper {
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                realm.copyToRealmOrUpdate(cityModel);
+                realm.insertOrUpdate(cityModel);
             }
         });
     }
