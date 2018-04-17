@@ -4,7 +4,6 @@ package ru.geekbrains.evgeniy.weatherapp.ui.home;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -19,8 +18,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
-import java.util.ArrayList;
-
 import io.realm.Realm;
 import ru.geekbrains.evgeniy.weatherapp.R;
 import ru.geekbrains.evgeniy.weatherapp.data.WorkWithFiles;
@@ -28,13 +25,13 @@ import ru.geekbrains.evgeniy.weatherapp.data.WorkWithSharedPreferences;
 import ru.geekbrains.evgeniy.weatherapp.ui.fragments.AboutFragment;
 import ru.geekbrains.evgeniy.weatherapp.ui.fragments.CityWeatherFragment;
 import ru.geekbrains.evgeniy.weatherapp.ui.fragments.CityWeatherListener;
-import ru.geekbrains.evgeniy.weatherapp.ui.fragments.DeleteCityListener;
+import ru.geekbrains.evgeniy.weatherapp.ui.fragments.DeleteEditCityListener;
 import ru.geekbrains.evgeniy.weatherapp.ui.fragments.MainContentFragment;
 import ru.geekbrains.evgeniy.weatherapp.model.CityModel;
-import ru.geekbrains.evgeniy.weatherapp.ui.dialogs.AddCityDialogListener;
+import ru.geekbrains.evgeniy.weatherapp.ui.fragments.AddCityListener;
 
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, AddCityDialogListener, CityWeatherListener, DeleteCityListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, AddCityListener, CityWeatherListener, DeleteEditCityListener {
 
     private NavigationView navigationView;
     private DrawerLayout drawer;
@@ -201,6 +198,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onDeleteCity(CityModel cityModel) {
         if (mainContentFragment != null) {
             mainContentFragment.onDeleteCity(cityModel);
+        }
+    }
+
+    @Override
+    public void onEditCity(Long id, String name) {
+        if (mainContentFragment != null) {
+            mainContentFragment.onEditCity(id, name);
         }
     }
 }

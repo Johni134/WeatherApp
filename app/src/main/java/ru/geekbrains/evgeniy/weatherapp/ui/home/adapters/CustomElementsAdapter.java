@@ -1,5 +1,6 @@
 package ru.geekbrains.evgeniy.weatherapp.ui.home.adapters;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -13,18 +14,12 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
 
 import io.realm.OrderedRealmCollection;
-import io.realm.Realm;
 import io.realm.RealmRecyclerViewAdapter;
 import ru.geekbrains.evgeniy.weatherapp.R;
-import ru.geekbrains.evgeniy.weatherapp.data.DataHelper;
-import ru.geekbrains.evgeniy.weatherapp.data.WorkWithSharedPreferences;
 import ru.geekbrains.evgeniy.weatherapp.ui.fragments.CityWeatherListener;
-import ru.geekbrains.evgeniy.weatherapp.ui.fragments.DeleteCityListener;
-import ru.geekbrains.evgeniy.weatherapp.ui.fragments.MainContentFragment;
+import ru.geekbrains.evgeniy.weatherapp.ui.fragments.DeleteEditCityListener;
 import ru.geekbrains.evgeniy.weatherapp.model.CityModel;
 
 interface OnCustomAdapterClickListener{
@@ -35,19 +30,17 @@ interface OnCustomAdapterClickListener{
 
 public class CustomElementsAdapter extends RealmRecyclerViewAdapter<CityModel, CustomElementsAdapter.CustomViewHolder> implements OnCustomAdapterClickListener{
 
-    private OrderedRealmCollection<CityModel> dataSet;
-    private ViewGroup viewGroup;
+    private Context context;
 
     public CustomElementsAdapter(OrderedRealmCollection<CityModel> dataSet) {
         super(dataSet, true);
-        this.dataSet = dataSet;
         setHasStableIds(true);
     }
 
     @NonNull
     @Override
     public CustomElementsAdapter.CustomViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        viewGroup = parent;
+        context = parent.getContext();
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_city, parent, false);
 
@@ -55,11 +48,11 @@ public class CustomElementsAdapter extends RealmRecyclerViewAdapter<CityModel, C
     }
 
     public String getIDs() {
-        if(dataSet == null || dataSet.size() == 0) {
+        if(getItemCount() == 0) {
             return "";
         } else {
             List<String> ids = new ArrayList<>();
-            for (CityModel cm: dataSet) {
+            for (CityModel cm: getData()) {
                 ids.add(String.valueOf(cm.id));
             }
             return StringUtils.join(ids, ",");
@@ -68,57 +61,42 @@ public class CustomElementsAdapter extends RealmRecyclerViewAdapter<CityModel, C
 
     @Override
     public void onBindViewHolder(@NonNull CustomElementsAdapter.CustomViewHolder holder, int position) {
-        holder.bind(dataSet.get(position), this);
+        final CityModel cm = getItem(position);
+        if(cm != null)
+            holder.bind(cm, this);
     }
 
     @Override
     public int getItemCount() {
-        return dataSet.size();
+        return getData().size();
     }
 
     @Override
     public void removeView(int position) {
-        ((DeleteCityListener) viewGroup.getContext()).onDeleteCity(dataSet.get(position));
-    }
-
-    public List<CityModel> getList() {
-        return dataSet;
+        ((DeleteEditCityListener) context).onDeleteCity(getItem(position));
     }
 
     @Override
     public void editView(int position) {
-        CityModel cm = dataSet.get(position);
-        cm.setName("Edited value");
-        // вдруг тут будем менять город
-        //WorkWithSharedPreferences.savePropertyWithEncrypt(MainContentFragment.SAVED_CITIES_ID, getIDs());
-        notifyItemChanged(position);
+        ((DeleteEditCityListener) context).onEditCity(getItem(position).id, "Edited");
     }
 
     @Override
     public void showDetailView(int position) {
-        ((CityWeatherListener) viewGroup.getContext()).showCityWeather(dataSet.get(position));
+        ((CityWeatherListener) context).showCityWeather(getItem(position));
     }
 
     public void addView(CityModel cityModel) {
-        dataSet.add(cityModel);
-        //WorkWithSharedPreferences.savePropertyWithEncrypt(MainContentFragment.SAVED_CITIES_ID, getIDs());
-        notifyItemInserted(dataSet.size() - 1);
+
     }
 
     public boolean alreadyExist(CityModel cityModel) {
-        for (CityModel cm: dataSet) {
+        for (CityModel cm: getData()) {
             if(cm.id.equals(cityModel.id))
                 return true;
         }
         return false;
     }
-
-    public void clear() {
-        dataSet.clear();
-        notifyDataSetChanged();
-    }
-
-
 
     public class CustomViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener,

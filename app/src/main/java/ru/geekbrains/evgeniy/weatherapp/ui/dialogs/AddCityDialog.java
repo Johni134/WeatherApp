@@ -13,6 +13,7 @@ import android.util.TypedValue;
 import android.widget.EditText;
 
 import ru.geekbrains.evgeniy.weatherapp.R;
+import ru.geekbrains.evgeniy.weatherapp.ui.fragments.AddCityListener;
 
 ///////////////////////////////////////////////////////////////////////////
 // Add City Dialog
@@ -35,7 +36,7 @@ public class AddCityDialog extends DialogFragment {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                ((AddCityDialogListener) getActivity()).onAddCity(input.getText().toString());
+                ((AddCityListener) getActivity()).onAddCity(input.getText().toString());
             }
         });
         return builder.create();

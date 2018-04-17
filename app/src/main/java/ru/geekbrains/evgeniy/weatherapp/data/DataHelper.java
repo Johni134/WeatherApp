@@ -14,7 +14,7 @@ public class DataHelper {
         });
     }
 
-    public static void deleteObject(Realm realm, final  CityModel cityModel) {
+    public static void deleteObject(Realm realm, final CityModel cityModel) {
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
@@ -23,13 +23,34 @@ public class DataHelper {
             }
         });
     }
+
     public static void deleteObjectById(Realm realm, final Long id) {
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
                 CityModel cityModel = realm.where(CityModel.class).equalTo(CityModel.FIELD_ID, id).findFirst();
-                if(cityModel != null)
+                if (cityModel != null)
                     cityModel.deleteFromRealm();
+            }
+        });
+    }
+
+    public static void clear(Realm realm) {
+        realm.executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                realm.deleteAll();
+            }
+        });
+    }
+
+    public static void editNameById(Realm realm, final Long id, final String name) {
+        realm.executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                CityModel cityModel = realm.where(CityModel.class).equalTo(CityModel.FIELD_ID, id).findFirst();
+                if (cityModel != null)
+                    cityModel.setName(name);
             }
         });
     }
