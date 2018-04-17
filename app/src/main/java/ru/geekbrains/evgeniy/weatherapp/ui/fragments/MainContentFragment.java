@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -37,7 +36,7 @@ import ru.geekbrains.evgeniy.weatherapp.ui.dialogs.AddCityDialog;
 public class MainContentFragment extends Fragment implements View.OnClickListener, AddCityListener, DeleteEditCityListener {
 
     private FloatingActionButton addView;
-    private RecyclerView recycleView;
+    private RecyclerView recyclerView;
     private CustomElementsAdapter adapter = null;
 
     private final String EXTRA_LIST = "list_classes";
@@ -96,7 +95,7 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
             } else {
                 adapter = new CustomElementsAdapter(realmResults);
                 realmResults.addChangeListener(realmChangeListener);
-                recycleView.setAdapter(adapter);
+                recyclerView.setAdapter(adapter);
             }
         }
 
@@ -129,7 +128,7 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
                                 RealmResults<CityModel> realmResults = realm.where(CityModel.class).findAll();
                                 realmResults.addChangeListener(realmChangeListener);
                                 adapter = new CustomElementsAdapter(realmResults);
-                                recycleView.setAdapter(adapter);
+                                recyclerView.setAdapter(adapter);
                             }
                         }
                     });
@@ -149,9 +148,9 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
     private void initViews(View view) {
         addView = view.findViewById(R.id.fab_add);
         addView.setOnClickListener(this);
-        recycleView = view.findViewById(R.id.rv_main);
-        recycleView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        recycleView.setHasFixedSize(true);
+        recyclerView = view.findViewById(R.id.rv_main);
+        recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+        recyclerView.setHasFixedSize(true);
     }
 
     private void addItemTouchCallback() {
@@ -159,17 +158,18 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
 
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                return false;
+                return true;
             }
 
             @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+            public void onSwiped(final RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getAdapterPosition();
                 adapter.removeView(position);
             }
+
         };
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
-        itemTouchHelper.attachToRecyclerView(recycleView);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
     }
 
     @Override
@@ -236,7 +236,7 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
 
     @Override
     public void onDestroyView() {
-        recycleView.setAdapter(null);
+        recyclerView.setAdapter(null);
         super.onDestroyView();
     }
 
