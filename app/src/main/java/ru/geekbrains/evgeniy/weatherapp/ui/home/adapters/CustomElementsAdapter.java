@@ -33,6 +33,7 @@ interface OnCustomAdapterClickListener{
 
 public class CustomElementsAdapter extends RealmRecyclerViewAdapter<CityModel, CustomElementsAdapter.CustomViewHolder> implements OnCustomAdapterClickListener{
 
+    private boolean wasInsertOrUpdate = false;
     private Realm realm;
     private CityWeatherListener fragment;
     private RealmResults<CityModel> dataSet;
@@ -40,6 +41,7 @@ public class CustomElementsAdapter extends RealmRecyclerViewAdapter<CityModel, C
     public CustomElementsAdapter(RealmResults<CityModel> dataSet, CityWeatherListener fragment) {
         super(dataSet, true);
         this.dataSet = dataSet;
+        this.dataSet.addChangeListener(realmChangeListener);
         this.fragment = fragment;
         setHasStableIds(true);
     }
@@ -47,6 +49,7 @@ public class CustomElementsAdapter extends RealmRecyclerViewAdapter<CityModel, C
     public CustomElementsAdapter(RealmResults<CityModel> dataSet, Realm realm) {
         super(dataSet, true);
         this.dataSet = dataSet;
+        this.dataSet.addChangeListener(realmChangeListener);
         this.realm = realm;
         setHasStableIds(true);
     }
@@ -54,17 +57,17 @@ public class CustomElementsAdapter extends RealmRecyclerViewAdapter<CityModel, C
     private RealmChangeListener realmChangeListener = new RealmChangeListener<RealmResults<CityModel>>() {
         @Override
         public void onChange(RealmResults<CityModel> cityModels) {
-            notifyDataSetChanged();
-            removeListenerFromRealmResults();
+            if(!wasInsertOrUpdate) {
+                notifyDataSetChanged();
+            }
+            else {
+                wasInsertOrUpdate = false;
+            }
         }
     };
 
-    public void addListenerToRealmResults() {
-        dataSet.addChangeListener(realmChangeListener);
-    }
-
-    private void removeListenerFromRealmResults() {
-        dataSet.removeChangeListener(realmChangeListener);
+    public void setWasInsertOrUpdate(boolean wasInsertOrUpdate) {
+        this.wasInsertOrUpdate = wasInsertOrUpdate;
     }
 
     @NonNull
@@ -103,27 +106,24 @@ public class CustomElementsAdapter extends RealmRecyclerViewAdapter<CityModel, C
     @Override
     public void removeView(int position) {
         CityModel cm = getItem(position);
-        if (cm != null) {
-            if (fragment != null && fragment instanceof DeleteEditCityListener) {
-                ((DeleteEditCityListener) fragment).onDeleteCity(cm);
-            }
-            else if(realm != null) {
-                DataHelper.deleteObjectById(realm, cm.id);
-            }
+        if (fragment != null && fragment instanceof DeleteEditCityListener) {
+            wasInsertOrUpdate = true;
+            ((DeleteEditCityListener) fragment).onDeleteCity(cm);
+        }
+        else if(realm != null) {
+            wasInsertOrUpdate = true;
+            DataHelper.deleteObjectById(realm, cm.id);
         }
     }
 
     @Override
     public void editView(int position) {
-        addListenerToRealmResults();
         CityModel cm = getItem(position);
-        if (cm != null) {
-            if (fragment != null && fragment instanceof DeleteEditCityListener) {
-                ((DeleteEditCityListener) fragment).onEditCity(cm.id, "Edited");
-            }
-            else if (realm != null) {
-                DataHelper.editNameById(realm, cm.id, "Edited");
-            }
+        if (fragment != null && fragment instanceof DeleteEditCityListener) {
+            ((DeleteEditCityListener) fragment).onEditCity(cm.id, "Edited");
+        }
+        else if (realm != null) {
+            DataHelper.editNameById(realm, cm.id, "Edited", this);
         }
     }
 

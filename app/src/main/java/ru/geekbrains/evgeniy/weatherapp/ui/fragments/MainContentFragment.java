@@ -23,7 +23,6 @@ import android.widget.Toast;
 import java.util.List;
 
 import io.realm.Realm;
-import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 import ru.geekbrains.evgeniy.weatherapp.data.DataHelper;
 import ru.geekbrains.evgeniy.weatherapp.ui.home.adapters.CustomElementsAdapter;
@@ -86,7 +85,7 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
 
         // realm ini
         if(realm != null) {
-            RealmResults<CityModel> realmResults = realm.where(CityModel.class).findAll();
+            RealmResults<CityModel> realmResults = realm.where(CityModel.class).findAll().sort(CityModel.SORT_ID);
             if (realmResults.size() == 0) {
                 updateWeathers(getString(R.string.default_cities));
             } else {
@@ -117,14 +116,13 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            adapter.addListenerToRealmResults();
-                            for (CityModel cm: cityModelArray.list) {
-                                DataHelper.createOrUpdateFromObject(realm, cm);
-                            }
                             if(adapter == null) {
-                                RealmResults<CityModel> realmResults = realm.where(CityModel.class).findAll();
+                                RealmResults<CityModel> realmResults = realm.where(CityModel.class).findAll().sort(CityModel.SORT_ID);
                                 adapter = new CustomElementsAdapter(realmResults, MainContentFragment.this);
                                 recyclerView.setAdapter(adapter);
+                            }
+                            for (CityModel cm: cityModelArray.list) {
+                                DataHelper.createOrUpdateFromObject(realm, cm);
                             }
                         }
                     });
@@ -212,8 +210,8 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
                                         Toast.LENGTH_LONG).show();
                             }
                             else {
+                                adapter.setWasInsertOrUpdate(true);
                                 DataHelper.createOrUpdateFromObject(realm, model);
-                                realm.refresh();
                             }
                         }
                     });
@@ -240,7 +238,7 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
             public void run() {
                 handler.post(new Runnable() {
                     public void run() {
-                        DataHelper.editNameById(realm, id, name);
+                        DataHelper.editNameById(realm, id, name, adapter);
                         realm.refresh();
                     }
                 });

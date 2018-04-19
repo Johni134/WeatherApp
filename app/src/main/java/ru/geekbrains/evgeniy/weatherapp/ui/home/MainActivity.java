@@ -23,6 +23,7 @@ import android.widget.ImageView;
 
 import io.realm.Realm;
 import ru.geekbrains.evgeniy.weatherapp.R;
+import ru.geekbrains.evgeniy.weatherapp.data.DataHelper;
 import ru.geekbrains.evgeniy.weatherapp.data.WorkWithFiles;
 import ru.geekbrains.evgeniy.weatherapp.data.WorkWithSharedPreferences;
 import ru.geekbrains.evgeniy.weatherapp.ui.fragments.AboutFragment;
@@ -67,6 +68,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // get realm instance
         realm = Realm.getDefaultInstance();
 
+        // update existing fields
+        updateExistingFields();
+
         // init drawer
         drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -110,6 +114,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void initViews() {
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    private void updateExistingFields() {
+        DataHelper.updateSortIDs(realm);
     }
 
     @Override

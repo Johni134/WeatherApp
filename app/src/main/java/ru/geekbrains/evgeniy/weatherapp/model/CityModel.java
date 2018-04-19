@@ -15,12 +15,16 @@ public class CityModel extends RealmObject implements Parcelable {
 
     public static final String FIELD_ID = "id";
 
+    public static final String SORT_ID = "sortId";
+
     public CoordModel coord;
     public RealmList<WeatherModel> weather = new RealmList<>();
     public String base;
 
     @PrimaryKey
     public Long id;
+
+    public Long sortId;
 
     public int cod;
     public MainWheatherInfo main;
