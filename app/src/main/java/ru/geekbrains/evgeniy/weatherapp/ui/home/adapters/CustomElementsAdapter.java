@@ -36,8 +36,13 @@ public class CustomElementsAdapter extends RealmRecyclerViewAdapter<CityModel, C
 
     public CustomElementsAdapter(OrderedRealmCollection<CityModel> dataSet, CityWeatherListener fragment) {
         super(dataSet, true);
-        realm = Realm.getDefaultInstance();
         this.fragment = fragment;
+        setHasStableIds(true);
+    }
+
+    public CustomElementsAdapter(OrderedRealmCollection<CityModel> dataSet, Realm realm) {
+        super(dataSet, true);
+        this.realm = realm;
         setHasStableIds(true);
     }
 
@@ -81,7 +86,7 @@ public class CustomElementsAdapter extends RealmRecyclerViewAdapter<CityModel, C
             if (fragment != null && fragment instanceof DeleteEditCityListener) {
                 ((DeleteEditCityListener) fragment).onDeleteCity(cm);
             }
-            else {
+            else if(realm != null) {
                 DataHelper.deleteObjectById(realm, cm.id);
                 notifyItemRemoved(position);
             }
@@ -95,7 +100,7 @@ public class CustomElementsAdapter extends RealmRecyclerViewAdapter<CityModel, C
             if (fragment != null && fragment instanceof DeleteEditCityListener) {
                 ((DeleteEditCityListener) fragment).onEditCity(cm.id, "Edited");
             }
-            else {
+            else if (realm != null) {
                 DataHelper.editNameById(realm, cm.id, "Edited");
                 notifyItemChanged(position);
             }
