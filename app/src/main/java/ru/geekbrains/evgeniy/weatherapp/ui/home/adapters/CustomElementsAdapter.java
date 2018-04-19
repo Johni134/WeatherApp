@@ -16,7 +16,9 @@ import java.util.List;
 
 import io.realm.OrderedRealmCollection;
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
 import io.realm.RealmRecyclerViewAdapter;
+import io.realm.RealmResults;
 import ru.geekbrains.evgeniy.weatherapp.R;
 import ru.geekbrains.evgeniy.weatherapp.data.DataHelper;
 import ru.geekbrains.evgeniy.weatherapp.ui.fragments.CityWeatherListener;
@@ -33,17 +35,36 @@ public class CustomElementsAdapter extends RealmRecyclerViewAdapter<CityModel, C
 
     private Realm realm;
     private CityWeatherListener fragment;
+    private RealmResults<CityModel> dataSet;
 
-    public CustomElementsAdapter(OrderedRealmCollection<CityModel> dataSet, CityWeatherListener fragment) {
+    public CustomElementsAdapter(RealmResults<CityModel> dataSet, CityWeatherListener fragment) {
         super(dataSet, true);
+        this.dataSet = dataSet;
         this.fragment = fragment;
         setHasStableIds(true);
     }
 
-    public CustomElementsAdapter(OrderedRealmCollection<CityModel> dataSet, Realm realm) {
+    public CustomElementsAdapter(RealmResults<CityModel> dataSet, Realm realm) {
         super(dataSet, true);
+        this.dataSet = dataSet;
         this.realm = realm;
         setHasStableIds(true);
+    }
+
+    private RealmChangeListener realmChangeListener = new RealmChangeListener<RealmResults<CityModel>>() {
+        @Override
+        public void onChange(RealmResults<CityModel> cityModels) {
+            notifyDataSetChanged();
+            removeListenerFromRealmResults();
+        }
+    };
+
+    public void addListenerToRealmResults() {
+        dataSet.addChangeListener(realmChangeListener);
+    }
+
+    private void removeListenerFromRealmResults() {
+        dataSet.removeChangeListener(realmChangeListener);
     }
 
     @NonNull
@@ -88,13 +109,13 @@ public class CustomElementsAdapter extends RealmRecyclerViewAdapter<CityModel, C
             }
             else if(realm != null) {
                 DataHelper.deleteObjectById(realm, cm.id);
-                notifyItemRemoved(position);
             }
         }
     }
 
     @Override
     public void editView(int position) {
+        addListenerToRealmResults();
         CityModel cm = getItem(position);
         if (cm != null) {
             if (fragment != null && fragment instanceof DeleteEditCityListener) {
@@ -102,7 +123,6 @@ public class CustomElementsAdapter extends RealmRecyclerViewAdapter<CityModel, C
             }
             else if (realm != null) {
                 DataHelper.editNameById(realm, cm.id, "Edited");
-                notifyItemChanged(position);
             }
         }
     }

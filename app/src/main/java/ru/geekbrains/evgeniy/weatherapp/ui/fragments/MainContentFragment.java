@@ -91,7 +91,6 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
                 updateWeathers(getString(R.string.default_cities));
             } else {
                 adapter = new CustomElementsAdapter(realmResults, this);
-                realmResults.addChangeListener(realmChangeListener);
                 recyclerView.setAdapter(adapter);
             }
         }
@@ -118,12 +117,12 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
+                            adapter.addListenerToRealmResults();
                             for (CityModel cm: cityModelArray.list) {
                                 DataHelper.createOrUpdateFromObject(realm, cm);
                             }
                             if(adapter == null) {
                                 RealmResults<CityModel> realmResults = realm.where(CityModel.class).findAll();
-                                realmResults.addChangeListener(realmChangeListener);
                                 adapter = new CustomElementsAdapter(realmResults, MainContentFragment.this);
                                 recyclerView.setAdapter(adapter);
                             }
@@ -133,14 +132,6 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
             }
         }.start();
     }
-
-    // из-за этой строчки, точнее из-за ее отсутствия, убил 2 дня жизни!
-    private RealmChangeListener realmChangeListener = new RealmChangeListener<RealmResults<CityModel>>() {
-        @Override
-        public void onChange(RealmResults<CityModel> cityModels) {
-            adapter.notifyDataSetChanged();
-        }
-    };
 
     private void initViews(View view) {
         addView = view.findViewById(R.id.fab_add);
