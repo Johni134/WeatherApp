@@ -1,6 +1,7 @@
 package ru.geekbrains.evgeniy.weatherapp.ui.fragments;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -33,7 +34,7 @@ import ru.geekbrains.evgeniy.weatherapp.model.CityModelArray;
 import ru.geekbrains.evgeniy.weatherapp.ui.dialogs.AddCityDialog;
 
 
-public class MainContentFragment extends Fragment implements View.OnClickListener, AddCityListener, DeleteEditCityListener {
+public class MainContentFragment extends Fragment implements View.OnClickListener, AddCityListener, CityWeatherListener, DeleteEditCityListener {
 
     private FloatingActionButton addView;
     private RecyclerView recyclerView;
@@ -70,10 +71,6 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
         }
     }
 
-    public void setRealm(Realm realm) {
-        this.realm = realm;
-    }
-
     // on create view
     @Nullable
     @Override
@@ -93,7 +90,7 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
             if (realmResults.size() == 0) {
                 updateWeathers(getString(R.string.default_cities));
             } else {
-                adapter = new CustomElementsAdapter(realmResults);
+                adapter = new CustomElementsAdapter(realmResults, this);
                 realmResults.addChangeListener(realmChangeListener);
                 recyclerView.setAdapter(adapter);
             }
@@ -127,7 +124,7 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
                             if(adapter == null) {
                                 RealmResults<CityModel> realmResults = realm.where(CityModel.class).findAll();
                                 realmResults.addChangeListener(realmChangeListener);
-                                adapter = new CustomElementsAdapter(realmResults);
+                                adapter = new CustomElementsAdapter(realmResults, MainContentFragment.this);
                                 recyclerView.setAdapter(adapter);
                             }
                         }
@@ -288,5 +285,16 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
             }
         }.start();
 
+    }
+
+    @Override
+    public void showCityWeather(CityModel cityModel) {
+        Context activity = getActivity();
+        if (activity instanceof CityWeatherListener)
+            ((CityWeatherListener) activity).showCityWeather(cityModel);
+    }
+
+    public void setRealm(Realm realm) {
+        this.realm = realm;
     }
 }

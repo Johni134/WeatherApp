@@ -1,6 +1,5 @@
 package ru.geekbrains.evgeniy.weatherapp.ui.home.adapters;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -16,8 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.OrderedRealmCollection;
+import io.realm.Realm;
 import io.realm.RealmRecyclerViewAdapter;
 import ru.geekbrains.evgeniy.weatherapp.R;
+import ru.geekbrains.evgeniy.weatherapp.data.DataHelper;
 import ru.geekbrains.evgeniy.weatherapp.ui.fragments.CityWeatherListener;
 import ru.geekbrains.evgeniy.weatherapp.ui.fragments.DeleteEditCityListener;
 import ru.geekbrains.evgeniy.weatherapp.model.CityModel;
@@ -30,17 +31,19 @@ interface OnCustomAdapterClickListener{
 
 public class CustomElementsAdapter extends RealmRecyclerViewAdapter<CityModel, CustomElementsAdapter.CustomViewHolder> implements OnCustomAdapterClickListener{
 
-    private Context context;
+    private Realm realm;
+    private CityWeatherListener fragment;
 
-    public CustomElementsAdapter(OrderedRealmCollection<CityModel> dataSet) {
+    public CustomElementsAdapter(OrderedRealmCollection<CityModel> dataSet, CityWeatherListener fragment) {
         super(dataSet, true);
+        realm = Realm.getDefaultInstance();
+        this.fragment = fragment;
         setHasStableIds(true);
     }
 
     @NonNull
     @Override
     public CustomElementsAdapter.CustomViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        context = parent.getContext();
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_city, parent, false);
 
@@ -73,17 +76,36 @@ public class CustomElementsAdapter extends RealmRecyclerViewAdapter<CityModel, C
 
     @Override
     public void removeView(int position) {
-        ((DeleteEditCityListener) context).onDeleteCity(getItem(position));
+        CityModel cm = getItem(position);
+        if (cm != null) {
+            if (fragment != null && fragment instanceof DeleteEditCityListener) {
+                ((DeleteEditCityListener) fragment).onDeleteCity(cm);
+            }
+            else {
+                DataHelper.deleteObjectById(realm, cm.id);
+                notifyItemRemoved(position);
+            }
+        }
     }
 
     @Override
     public void editView(int position) {
-        ((DeleteEditCityListener) context).onEditCity(getItem(position).id, "Edited");
+        CityModel cm = getItem(position);
+        if (cm != null) {
+            if (fragment != null && fragment instanceof DeleteEditCityListener) {
+                ((DeleteEditCityListener) fragment).onEditCity(cm.id, "Edited");
+            }
+            else {
+                DataHelper.editNameById(realm, cm.id, "Edited");
+                notifyItemChanged(position);
+            }
+        }
     }
 
     @Override
     public void showDetailView(int position) {
-        ((CityWeatherListener) context).showCityWeather(getItem(position));
+        if (fragment != null)
+            fragment.showCityWeather(getItem(position));
     }
 
     public void addView(CityModel cityModel) {

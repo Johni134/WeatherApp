@@ -1,6 +1,9 @@
 package ru.geekbrains.evgeniy.weatherapp.ui.home;
 
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -207,4 +210,5 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             mainContentFragment.onEditCity(id, name);
         }
     }
+
 }
