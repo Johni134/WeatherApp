@@ -85,7 +85,7 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
 
         // realm ini
         if(realm != null) {
-            RealmResults<CityModel> realmResults = realm.where(CityModel.class).findAll().sort(CityModel.SORT_ID);
+            RealmResults<CityModel> realmResults = getMainRealmResults();
             if (realmResults.size() == 0) {
                 updateWeathers(getString(R.string.default_cities));
             } else {
@@ -117,8 +117,7 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
                         @Override
                         public void run() {
                             if(adapter == null) {
-                                RealmResults<CityModel> realmResults = realm.where(CityModel.class).findAll().sort(CityModel.SORT_ID);
-                                adapter = new CustomElementsAdapter(realmResults, MainContentFragment.this);
+                                adapter = new CustomElementsAdapter(getMainRealmResults(), MainContentFragment.this);
                                 recyclerView.setAdapter(adapter);
                             }
                             for (CityModel cm: cityModelArray.list) {
@@ -129,6 +128,13 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
                 }
             }
         }.start();
+    }
+
+    private RealmResults<CityModel> getMainRealmResults() {
+        if(realm != null)
+            return realm.where(CityModel.class).findAll().sort(CityModel.SORT_ID);
+        else
+            return null;
     }
 
     private void initViews(View view) {
