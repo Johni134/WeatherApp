@@ -1,5 +1,6 @@
 package ru.geekbrains.evgeniy.weatherapp.ui.home.adapters;
 
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -72,9 +73,13 @@ public class CustomElementsAdapter extends RealmRecyclerViewAdapter<CityModel, C
 
     @NonNull
     @Override
-    public CustomElementsAdapter.CustomViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public CustomViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_city, parent, false);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            v.setTranslationZ(4);
+        }
 
         return new CustomViewHolder(v);
     }

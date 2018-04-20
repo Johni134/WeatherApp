@@ -27,6 +27,7 @@ public class AddCityDialog extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(getString(R.string.add_city_dialog));
         final EditText input = new EditText(getActivity());
+        input.setText("");
         Resources r = getResources();
         int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, r.getDisplayMetrics());
         input.setPadding(px, px, px, px);
