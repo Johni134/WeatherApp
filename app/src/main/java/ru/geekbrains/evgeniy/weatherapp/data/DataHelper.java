@@ -31,7 +31,7 @@ public class DataHelper {
         newCM.sortId = oldSortId;
         if (newCM.sortId == null) {
             Number maxSortId = realm.where(CityModel.class).max(CityModel.SORT_ID);
-            currentCM.sortId = (maxSortId == null) ? 1 : maxSortId.longValue() + 1;
+            newCM.sortId = (maxSortId == null) ? 1 : maxSortId.longValue() + 1;
         }
     }
 
