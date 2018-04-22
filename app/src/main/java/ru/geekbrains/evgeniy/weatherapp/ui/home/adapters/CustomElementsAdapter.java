@@ -128,7 +128,7 @@ public class CustomElementsAdapter extends RealmRecyclerViewAdapter<CityModel, C
             ((DeleteEditCityListener) fragment).onEditCity(cm.id, "Edited");
         }
         else if (realm != null) {
-            DataHelper.editNameById(realm, cm.id, "Edited", this);
+            DataHelper.editNameById(realm, cm.id, "Edited");
         }
     }
 

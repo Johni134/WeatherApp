@@ -252,7 +252,7 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
             public void run() {
                 handler.post(new Runnable() {
                     public void run() {
-                        DataHelper.editNameById(realm, id, name, adapter);
+                        DataHelper.editNameById(realm, id, name);
                         realm.refresh();
                     }
                 });

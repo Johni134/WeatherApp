@@ -79,7 +79,7 @@ public class DataHelper {
         });
     }
 
-    public static void editNameById(Realm realm, final Long id, final String name, final CustomElementsAdapter adapter) {
+    public static void editNameById(Realm realm, final Long id, final String name) {
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
@@ -90,23 +90,23 @@ public class DataHelper {
         });
     }
 
-    public static void updateAllWeathers(Realm realm) {
+    public static String getIDsSync(Realm realm) {
+        RealmResults<CityModel> realmResults = realm.where(CityModel.class).findAll().sort(CityModel.SORT_ID);
+        List<String> ids = new ArrayList<>();
+        for (CityModel cm: realmResults) {
+            ids.add(String.valueOf(cm.id));
+        }
+        return StringUtils.join(ids, ",");
+    }
+
+    public static void updateAllWeathersByList(Realm realm, final ArrayList<CityModel> list) {
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                RealmResults<CityModel> realmResults = realm.where(CityModel.class).findAll().sort(CityModel.SORT_ID);
-                List<String> ids = new ArrayList<>();
-                for (CityModel cm: realmResults) {
-                    ids.add(String.valueOf(cm.id));
-                }
-                CityModelArray cityModelArray = WeatherDataLoader.getListWeatherByIDs(StringUtils.join(ids, ","));
-                if(cityModelArray != null && cityModelArray.list.size() > 0) {
-                    for (CityModel cm: cityModelArray.list) {
-                        createOrUpdateFromObjectSync(realm, cm);
-                    }
+                for (CityModel cm : list) {
+                    createOrUpdateFromObjectSync(realm, cm);
                 }
             }
         });
-
     }
 }
