@@ -21,6 +21,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <service android:name=".services.UpdateService"
+            android:exported="false"
+            />
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="26561df6ecccff14c554771372e104e1cdb667a3" />

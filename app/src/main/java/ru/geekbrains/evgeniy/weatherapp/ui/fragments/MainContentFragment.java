@@ -1,6 +1,7 @@
 package ru.geekbrains.evgeniy.weatherapp.ui.fragments;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,6 +26,7 @@ import java.util.List;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import ru.geekbrains.evgeniy.weatherapp.data.DataHelper;
+import ru.geekbrains.evgeniy.weatherapp.ui.home.MainActivity;
 import ru.geekbrains.evgeniy.weatherapp.ui.home.adapters.CustomElementsAdapter;
 import ru.geekbrains.evgeniy.weatherapp.R;
 import ru.geekbrains.evgeniy.weatherapp.data.WeatherDataLoader;
@@ -63,7 +65,13 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
                 DataHelper.clear(realm);
                 return true;
             case R.id.menu_refresh:
-                updateWeathers(adapter.getIDs());
+                Activity activity = getActivity();
+                if(activity != null && activity instanceof MainActivity) {
+                    ((MainActivity) activity).onBindService();
+                }
+                else {
+                    updateWeathers(adapter.getIDs());
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -101,7 +109,7 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
         new Thread() {
 
             public void run() {
-                final CityModelArray cityModelArray = WeatherDataLoader.getListWeatherByIDs(getContext(), ids);
+                final CityModelArray cityModelArray = WeatherDataLoader.getListWeatherByIDs(ids);
                 if (cityModelArray == null) {
                     handler.post(new Runnable() {
 
@@ -186,7 +194,7 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
         new Thread() {//Отдельный поток для получения новых данных в фоне
 
             public void run() {
-                final CityModel model = WeatherDataLoader.getWeatherByCity(getActivity(), city);
+                final CityModel model = WeatherDataLoader.getWeatherByCity(city);
                 // Вызов методов напрямую может вызвать runtime error
                 // Мы не можем напрямую обновить UI, поэтому используем handler, чтобы обновить интерфейс в главном потоке.
                 if (model == null) {

@@ -2,11 +2,14 @@ package ru.geekbrains.evgeniy.weatherapp.ui.home;
 
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -26,6 +29,7 @@ import ru.geekbrains.evgeniy.weatherapp.R;
 import ru.geekbrains.evgeniy.weatherapp.data.DataHelper;
 import ru.geekbrains.evgeniy.weatherapp.data.WorkWithFiles;
 import ru.geekbrains.evgeniy.weatherapp.data.WorkWithSharedPreferences;
+import ru.geekbrains.evgeniy.weatherapp.services.UpdateService;
 import ru.geekbrains.evgeniy.weatherapp.ui.fragments.AboutFragment;
 import ru.geekbrains.evgeniy.weatherapp.ui.fragments.CityWeatherFragment;
 import ru.geekbrains.evgeniy.weatherapp.ui.fragments.CityWeatherListener;
@@ -37,15 +41,23 @@ import ru.geekbrains.evgeniy.weatherapp.ui.fragments.AddCityListener;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, AddCityListener, CityWeatherListener, DeleteEditCityListener {
 
+    // service
+    private boolean shouldUnbind = false;
+    private ServiceConnection serviceConnection;
+    private UpdateService updateService;
+
+    // views
     private NavigationView navigationView;
     private DrawerLayout drawer;
 
+    // fragments
     private MainContentFragment mainContentFragment = null;
     private AboutFragment aboutFragment = null;
     private CityWeatherFragment cityWeatherFragment = null;
     private Fragment curFragment = null;
     FragmentManager fragmentManager = getSupportFragmentManager();
 
+    // const
     private final String EXTRA_CURRENT_CHECKED_NAV_ITEM = "current_nav_item";
     private final String EXTRA_MAIN_ARRAYLIST = "main_arraylist";
     private final String EXTRA_CITY_MODEL_KEY = "city_model_key";
@@ -54,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private int navCheckedItem = R.id.nav_cities;
 
+    // realm
     private Realm realm;
 
     @Override
@@ -70,6 +83,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         // update existing fields
         updateExistingFields();
+
+        // init service
+        initService();
 
         // init drawer
         drawer = findViewById(R.id.drawer_layout);
@@ -109,6 +125,32 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (cityWeatherFragment != null) {
             showCityWeather(cityWeatherFragment.getCityModel());
         }
+    }
+
+    private void initService() {
+        serviceConnection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                updateService = ((UpdateService.UpdateWeathersBinder) service).getService();
+                shouldUnbind = true;
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                shouldUnbind = false;
+            }
+        };
+    }
+
+    public void onBindService() {
+        Intent intent = new Intent(getBaseContext(), UpdateService.class);
+        bindService(intent, serviceConnection, BIND_AUTO_CREATE);
+    }
+    public void onUnbindService() {
+        if(shouldUnbind) {
+            unbindService(serviceConnection);
+        }
+        shouldUnbind = false;
     }
 
     private void initViews() {
@@ -202,6 +244,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        onUnbindService();
         realm.close();
     }
 
