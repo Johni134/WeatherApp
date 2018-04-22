@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
@@ -108,6 +109,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             View header = navigationView.getHeaderView(0);
             ImageView iv = header.findViewById(R.id.imageView);
             iv.setImageBitmap(bmFromFile);
+
+
         }
 
         // init shared pref key
