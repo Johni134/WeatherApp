@@ -99,12 +99,20 @@ public class DataHelper {
         return StringUtils.join(ids, ",");
     }
 
-    public static void updateAllWeathersByList(Realm realm, final ArrayList<CityModel> list) {
+    public static void updateAllWeathers(Realm realm) {
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                for (CityModel cm : list) {
-                    createOrUpdateFromObjectSync(realm, cm);
+                RealmResults<CityModel> realmResults = realm.where(CityModel.class).findAll().sort(CityModel.SORT_ID);
+                List<String> ids = new ArrayList<>();
+                for (CityModel cm: realmResults) {
+                    ids.add(String.valueOf(cm.id));
+                }
+                CityModelArray cityModelArray = WeatherDataLoader.getListWeatherByIDs(StringUtils.join(ids, ","));
+                if(cityModelArray != null && cityModelArray.list.size() > 0) {
+                    for (CityModel cm: cityModelArray.list) {
+                        createOrUpdateFromObjectSync(realm, cm);
+                    }
                 }
             }
         });

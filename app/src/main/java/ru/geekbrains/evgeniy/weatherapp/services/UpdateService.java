@@ -32,26 +32,8 @@ public class UpdateService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        final Realm realm = Realm.getInstance(WeatherApplication.getRealmConf());
-        final String ids = DataHelper.getIDsSync(realm);
-        final Handler handler = new Handler();
-        if(!ids.isEmpty()) {
-            new Thread() {
-                public void run() {
-                    final CityModelArray cityModelArray = WeatherDataLoader.getListWeatherByIDs(ids);
-                    if (cityModelArray != null && cityModelArray.list.size() > 0) {
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                DataHelper.updateAllWeathersByList(realm, cityModelArray.list);
-                            }
-                        });
-
-                    }
-
-                }
-            }.start();
-        }
+        Realm realm = Realm.getInstance(WeatherApplication.getRealmConf());
+        DataHelper.updateAllWeathers(realm);
     }
 
     @Override
