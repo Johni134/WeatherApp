@@ -67,7 +67,7 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
             case R.id.menu_refresh:
                 Activity activity = getActivity();
                 if(activity != null && activity instanceof MainActivity) {
-                    ((MainActivity) activity).onBindService();
+                    ((MainActivity) activity).updateWeathers();
                 }
                 else {
                     updateWeathers(adapter.getIDs());

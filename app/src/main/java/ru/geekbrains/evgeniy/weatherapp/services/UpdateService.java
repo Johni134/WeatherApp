@@ -32,8 +32,6 @@ public class UpdateService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Realm realm = Realm.getInstance(WeatherApplication.getRealmConf());
-        DataHelper.updateAllWeathers(realm);
     }
 
     @Override
@@ -44,5 +42,15 @@ public class UpdateService extends Service {
     @Override
     public boolean onUnbind(Intent intent) {
         return super.onUnbind(intent);
+    }
+
+    @Override
+    public void onRebind(Intent intent) {
+        super.onRebind(intent);
+    }
+
+    public void updateWeathers() {
+        Realm realm = Realm.getInstance(WeatherApplication.getRealmConf());
+        DataHelper.updateAllWeathers(realm);
     }
 }

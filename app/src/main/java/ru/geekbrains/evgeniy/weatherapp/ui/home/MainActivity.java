@@ -24,6 +24,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import io.realm.Realm;
 import ru.geekbrains.evgeniy.weatherapp.R;
@@ -143,6 +144,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 shouldUnbind = false;
             }
         };
+        onBindService();
     }
 
     public void onBindService() {
@@ -154,6 +156,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             unbindService(serviceConnection);
         }
         shouldUnbind = false;
+    }
+
+    public void updateWeathers() {
+        if(!shouldUnbind) {
+            Toast.makeText(this, getString(R.string.place_not_found), Toast.LENGTH_SHORT).show();
+            onBindService();
+            return;
+        }
+
+        updateService.updateWeathers();
     }
 
     private void initViews() {
