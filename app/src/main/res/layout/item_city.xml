@@ -13,11 +13,22 @@
         android:padding="16dp">
 
         <TextView
+            android:id="@+id/tvLastUpdate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            android:theme="@style/Widget.Platform.TextView.Update"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/tvTemp"
+            app:layout_constraintTop_toBottomOf="@+id/tvTitle"
+            tools:text="LastUpdate" />
+
+        <TextView
             android:id="@+id/tvTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:theme="@style/Widget.Platform.TextView.Title"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toLeftOf="@+id/tvTemp"
             app:layout_constraintTop_toTopOf="parent"

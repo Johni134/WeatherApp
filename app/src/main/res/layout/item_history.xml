@@ -4,12 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="4dp"
-    app:cardCornerRadius="@dimen/cardview_radius"
-    app:cardElevation="@dimen/cardview_elevation">
-
+    android:layout_margin="4dp">
     <android.support.constraint.ConstraintLayout
-
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp">
@@ -18,23 +14,12 @@
             android:id="@+id/tvLastUpdate"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="TextView"
             android:theme="@style/Widget.Platform.TextView.Update"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toLeftOf="@+id/tvTemp"
-            app:layout_constraintTop_toBottomOf="@+id/tvTitle"
-            tools:text="LastUpdate" />
-
-        <TextView
-            android:id="@+id/tvTitle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:theme="@style/Widget.Platform.TextView.Title"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@+id/tvTemp"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Title" />
+            tools:text="LastUpdate" />
 
         <TextView
             android:id="@+id/tvTemp"
@@ -42,20 +27,8 @@
             android:layout_height="wrap_content"
             android:theme="@style/Widget.Platform.TextView.Description"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toLeftOf="@+id/tvOptionDigit"
+            app:layout_constraintRight_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Temp" />
-
-        <TextView
-            android:id="@+id/tvOptionDigit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?selectableItemBackground"
-            android:padding="8dp"
-            android:text="@string/dots_menu"
-            android:textAppearance="?android:textAppearanceLarge"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
     </android.support.constraint.ConstraintLayout>
 </android.support.v7.widget.CardView>

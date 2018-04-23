@@ -98,6 +98,7 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
                 updateWeathers(getString(R.string.default_cities));
             } else {
                 adapter = new CustomElementsAdapter(realmResults, this);
+                adapter.setUpdateString(getString(R.string.last_update));
                 recyclerView.setAdapter(adapter);
             }
         }
@@ -126,6 +127,7 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
                         public void run() {
                             if(adapter == null) {
                                 adapter = new CustomElementsAdapter(getMainRealmResults(), MainContentFragment.this);
+                                adapter.setUpdateString(getString(R.string.last_update));
                                 recyclerView.setAdapter(adapter);
                             }
                             for (CityModel cm: cityModelArray.list) {
@@ -295,6 +297,13 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
         Context activity = getActivity();
         if (activity instanceof CityWeatherListener)
             ((CityWeatherListener) activity).showCityWeather(cityModel);
+    }
+
+    @Override
+    public void showHistory(CityModel cityModel) {
+        Context activity = getActivity();
+        if (activity instanceof CityWeatherListener)
+            ((CityWeatherListener) activity).showHistory(cityModel);
     }
 
     public void setRealm(Realm realm) {

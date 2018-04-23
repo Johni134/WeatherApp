@@ -6,6 +6,10 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -45,6 +49,10 @@ public class CityModel extends RealmObject implements Parcelable {
         this.name = name;
     }
 
+    public String getNameWithCountry() {
+        return getName() + ", " + sys.country;
+    }
+
     public static final Creator<CityModel> CREATOR = new Creator<CityModel>() {
 
         @Override
@@ -57,6 +65,8 @@ public class CityModel extends RealmObject implements Parcelable {
             return new CityModel[size];
         }
     };
+
+
 
     @Override
     public int describeContents() {
@@ -171,6 +181,6 @@ public class CityModel extends RealmObject implements Parcelable {
     }
 
     public String getTempC() {
-        return String.format("%.2f", main.temp) + " ℃";
+        return main.getTempC();
     }
 }

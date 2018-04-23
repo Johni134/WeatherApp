@@ -22,6 +22,7 @@ import io.realm.RealmRecyclerViewAdapter;
 import io.realm.RealmResults;
 import ru.geekbrains.evgeniy.weatherapp.R;
 import ru.geekbrains.evgeniy.weatherapp.data.DataHelper;
+import ru.geekbrains.evgeniy.weatherapp.data.SupportingLib;
 import ru.geekbrains.evgeniy.weatherapp.ui.fragments.CityWeatherListener;
 import ru.geekbrains.evgeniy.weatherapp.ui.fragments.DeleteEditCityListener;
 import ru.geekbrains.evgeniy.weatherapp.model.CityModel;
@@ -30,6 +31,7 @@ interface OnCustomAdapterClickListener{
     void removeView(int position);
     void editView(int position);
     void showDetailView(int position);
+    void showHistory(int position);
 }
 
 public class CustomElementsAdapter extends RealmRecyclerViewAdapter<CityModel, CustomElementsAdapter.CustomViewHolder> implements OnCustomAdapterClickListener{
@@ -38,6 +40,11 @@ public class CustomElementsAdapter extends RealmRecyclerViewAdapter<CityModel, C
     private Realm realm;
     private CityWeatherListener fragment;
     private RealmResults<CityModel> dataSet;
+    private String updateString = "";
+
+    public void setUpdateString(String updateString) {
+        this.updateString = updateString;
+    }
 
     public CustomElementsAdapter(RealmResults<CityModel> dataSet, CityWeatherListener fragment) {
         super(dataSet, true);
@@ -138,6 +145,12 @@ public class CustomElementsAdapter extends RealmRecyclerViewAdapter<CityModel, C
             fragment.showCityWeather(getItem(position));
     }
 
+    @Override
+    public void showHistory(int position) {
+        if (fragment != null)
+            fragment.showHistory(getItem(position));
+    }
+
     public void addView(CityModel cityModel) {
 
     }
@@ -157,6 +170,7 @@ public class CustomElementsAdapter extends RealmRecyclerViewAdapter<CityModel, C
         private TextView textViewTitle;
         private TextView textViewOption;
         private TextView textViewTemp;
+        private TextView textViewLastUpdate;
 
         private OnCustomAdapterClickListener callbacks;
 
@@ -165,21 +179,27 @@ public class CustomElementsAdapter extends RealmRecyclerViewAdapter<CityModel, C
             textViewTitle = itemView.findViewById(R.id.tvTitle);
             textViewTemp = itemView.findViewById(R.id.tvTemp);
             textViewOption = itemView.findViewById(R.id.tvOptionDigit);
+            textViewLastUpdate = itemView.findViewById(R.id.tvLastUpdate);
             textViewOption.setOnClickListener(this);
             textViewTitle.setOnClickListener(this);
             textViewTemp.setOnClickListener(this);
+            textViewLastUpdate.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
         }
 
         void bind(CityModel cityModel, OnCustomAdapterClickListener callbacks) {
             this.callbacks = callbacks;
-            textViewTitle.setText(cityModel.getName() + ", " + cityModel.sys.country);
+            textViewTitle.setText(cityModel.getNameWithCountry());
             textViewTemp.setText(cityModel.getTempC());
+            textViewLastUpdate.setText((updateString == "" ? "" : updateString + " ") + SupportingLib.getLastUpdate(cityModel.dt));
         }
 
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()) {
+                case R.id.menu_show_history:
+                    if(callbacks != null) callbacks.showHistory(getAdapterPosition());
+                    return true;
                 case R.id.menu_edit:
                     if (callbacks != null) callbacks.editView(getAdapterPosition());
                     return true;

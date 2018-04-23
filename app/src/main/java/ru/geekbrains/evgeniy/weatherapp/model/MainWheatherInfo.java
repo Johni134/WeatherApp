@@ -15,4 +15,8 @@ public class MainWheatherInfo extends RealmObject {
     public long humidity;
     public Double temp_min;
     public Double temp_max;
+
+    public String getTempC() {
+        return String.format("%.2f", temp) + " ℃";
+    }
 }

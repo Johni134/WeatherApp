@@ -1,6 +1,8 @@
 package ru.geekbrains.evgeniy.weatherapp.ui.fragments;
 
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -12,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,13 +27,14 @@ import ru.geekbrains.evgeniy.weatherapp.data.WeatherDataLoader;
 import ru.geekbrains.evgeniy.weatherapp.model.CityModel;
 
 
-public class CityWeatherFragment extends Fragment {
+public class CityWeatherFragment extends Fragment implements View.OnClickListener {
 
     private TextView cityTextView;
     private TextView updatedTextView;
     private TextView detailsTextView;
     private TextView currentTemperatureTextView;
     private TextView weatherIcon;
+    private Button buttonShowHistory;
 
     private final Handler handler = new Handler();
 
@@ -68,6 +72,8 @@ public class CityWeatherFragment extends Fragment {
         detailsTextView = view.findViewById(R.id.details_field);
         currentTemperatureTextView = view.findViewById(R.id.current_temperature_field);
         weatherIcon = view.findViewById(R.id.weather_icon);
+        buttonShowHistory = view.findViewById(R.id.buttonShowHistory);
+        buttonShowHistory.setOnClickListener(this);
     }
 
     @Override
@@ -187,5 +193,16 @@ public class CityWeatherFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         outState.putParcelable(EXTRA_CITY_MODEL_KEY, currentCityModel);
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.buttonShowHistory:
+                Context activity = getActivity();
+                if (activity instanceof CityWeatherListener)
+                    ((CityWeatherListener) activity).showHistory(currentCityModel);
+                break;
+        }
     }
 }

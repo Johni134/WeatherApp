@@ -257,6 +257,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
+    public void showHistory(CityModel cityModel) {
+        if (cityModel != null)
+        {
+            Intent intent = new Intent(this, CityHistoryActivity.class);
+            intent.putExtra(CityHistoryActivity.EXTRA_CITY_TITLE, cityModel.getNameWithCountry());
+            intent.putExtra(CityHistoryActivity.EXTRA_CITY_ID, cityModel.id);
+            startActivity(intent);
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         onUnbindService();

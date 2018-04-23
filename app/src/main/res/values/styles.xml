@@ -42,7 +42,9 @@
     </style>
 
     <style name="Widget.Platform.TextView.Title">
-        <item name="android:padding">@dimen/tv_title_padding</item>
+        <item name="android:paddingStart">@dimen/tv_title_padding</item>
+        <item name="android:paddingEnd">@dimen/tv_title_padding</item>
+        <item name="android:paddingTop">@dimen/tv_title_padding</item>
         <item name="android:textSize">18sp</item>
         <item name="android:gravity">left</item>
         <item name="android:textStyle">bold</item>
@@ -51,6 +53,14 @@
     <style name="Widget.Platform.TextView.Description">
         <item name="android:textSize">14sp</item>
         <item name="android:gravity">center</item>
+        <item name="android:textStyle">italic</item>
+    </style>
+
+    <style name="Widget.Platform.TextView.Update">
+        <item name="android:paddingStart">@dimen/tv_title_padding</item>
+        <item name="android:paddingEnd">@dimen/tv_title_padding</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:gravity">left</item>
         <item name="android:textStyle">italic</item>
     </style>
 

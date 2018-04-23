@@ -15,6 +15,7 @@ import okhttp3.Response;
 import ru.geekbrains.evgeniy.weatherapp.R;
 import ru.geekbrains.evgeniy.weatherapp.model.CityModel;
 import ru.geekbrains.evgeniy.weatherapp.model.CityModelArray;
+import ru.geekbrains.evgeniy.weatherapp.model.HistoryModelArray;
 
 
 /**
@@ -36,14 +37,28 @@ public class WeatherDataLoader {
     // переношу сюда app id, чтобы не использовать context
     private static final String OPEN_WEATHER_MAPS_APP_ID = "5a7b4adfb331abce78c619ae441ab686";
 
+    enum MainParametr {
+        WEATHER("weather"),
+        GROUP("group"),
+        FORECAST("forecast");
+
+        private String description;
+
+        private MainParametr(String description) {
+            this.description = description;
+        }
+
+        public String getDescription() {return description;}
+    };
+
     private static String getJSONWeatherByParametr(String query, String parametr) {
-        return getJSONWeatherByParametr(query, parametr, false);
+        return getJSONWeatherByParametr(query, parametr, MainParametr.WEATHER.getDescription());
     }
 
-    private static String getJSONWeatherByParametr(String query, String parametr, boolean isGroup) {
+    private static String getJSONWeatherByParametr(String query, String parametr, String mainParametr) {
         // init
         OkHttpClient okHttpClient = new OkHttpClient();
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(String.format(OPEN_WEATHER_MAP_API_OKHTTP, (isGroup ? "group" : "weather"))).newBuilder();
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(String.format(OPEN_WEATHER_MAP_API_OKHTTP, mainParametr)).newBuilder();
         urlBuilder.addQueryParameter(parametr, query);
         urlBuilder.addQueryParameter(APIKEY, OPEN_WEATHER_MAPS_APP_ID);
         urlBuilder.addQueryParameter("units", "metric");
@@ -119,7 +134,7 @@ public class WeatherDataLoader {
     }
 
     public static CityModelArray getListWeatherByIDs(String ids) {
-        String jsonString = getJSONWeatherByParametr(ids, "id", true);
+        String jsonString = getJSONWeatherByParametr(ids, "id", MainParametr.GROUP.getDescription());
         if (jsonString == null)
             return null;
         GsonBuilder builder = new GsonBuilder();
@@ -132,5 +147,20 @@ public class WeatherDataLoader {
             return null;
         }
         return cityModelArray;
+    }
+
+    public static HistoryModelArray getHistoryWeatherByID(String id) {
+        String jsonString = getJSONWeatherByParametr(id, "id", MainParametr.FORECAST.getDescription());
+        if (jsonString == null)
+            return null;
+
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+        HistoryModelArray historyModelArray = gson.fromJson(jsonString, HistoryModelArray.class);
+
+        if (historyModelArray.cod != ALL_GOOD) {
+            return null;
+        }
+        return historyModelArray;
     }
 }
