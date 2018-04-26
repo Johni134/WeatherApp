@@ -22,8 +22,8 @@
     <string name="info_was_updated">Информация была обновлена</string>
     <string name="city_already_exist">Город уже есть в списке</string>
     <string name="toast_external_storage_not_found">Не нашли внешнее хранилище данных</string>
-    <string name="menu_show_history">Показать историю</string>
-    <string name="show_history">Показать историю</string>
+    <string name="menu_show_forecast">Показать прогноз</string>
+    <string name="show_forecast">Показать прогноз</string>
 
-    <string name="history_for_5_days">История за 5 днейы</string>
+    <string name="forecast_for_5_days">Прогноз на 5 дней</string>
 </resources>

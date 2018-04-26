@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.apache.commons.lang3.StringUtils;
@@ -32,6 +33,7 @@ interface OnCustomAdapterClickListener{
     void editView(int position);
     void showDetailView(int position);
     void showHistory(int position);
+    void setFavorite(int position);
 }
 
 public class CustomElementsAdapter extends RealmRecyclerViewAdapter<CityModel, CustomElementsAdapter.CustomViewHolder> implements OnCustomAdapterClickListener{
@@ -151,8 +153,18 @@ public class CustomElementsAdapter extends RealmRecyclerViewAdapter<CityModel, C
             fragment.showHistory(getItem(position));
     }
 
-    public void addView(CityModel cityModel) {
+    @Override
+    public void setFavorite(int position) {
+        CityModel cm = getItem(position);
+        if (fragment != null && fragment instanceof DeleteEditCityListener) {
+            ((DeleteEditCityListener) fragment).setFavorite(cm);
+        }
+        else if (realm != null) {
+            DataHelper.setFavorite(realm, cm);
+        }
+    }
 
+    public void addView(CityModel cityModel) {
     }
 
     public boolean alreadyExist(CityModel cityModel) {
@@ -171,6 +183,7 @@ public class CustomElementsAdapter extends RealmRecyclerViewAdapter<CityModel, C
         private TextView textViewOption;
         private TextView textViewTemp;
         private TextView textViewLastUpdate;
+        private ImageView imageViewStar;
 
         private OnCustomAdapterClickListener callbacks;
 
@@ -180,6 +193,8 @@ public class CustomElementsAdapter extends RealmRecyclerViewAdapter<CityModel, C
             textViewTemp = itemView.findViewById(R.id.tvTemp);
             textViewOption = itemView.findViewById(R.id.tvOptionDigit);
             textViewLastUpdate = itemView.findViewById(R.id.tvLastUpdate);
+            imageViewStar = itemView.findViewById(R.id.ivFavorite);
+            imageViewStar.setOnClickListener(this);
             textViewOption.setOnClickListener(this);
             textViewTitle.setOnClickListener(this);
             textViewTemp.setOnClickListener(this);
@@ -192,6 +207,10 @@ public class CustomElementsAdapter extends RealmRecyclerViewAdapter<CityModel, C
             textViewTitle.setText(cityModel.getNameWithCountry());
             textViewTemp.setText(cityModel.getTempC());
             textViewLastUpdate.setText((updateString == "" ? "" : updateString + " ") + SupportingLib.getLastUpdate(cityModel.dt));
+            if (cityModel.isFavorite())
+                imageViewStar.setImageResource(R.mipmap.ic_yellow_star);
+            else
+                imageViewStar.setImageResource(R.mipmap.ic_yellow_star_empty);
         }
 
         @Override
@@ -220,6 +239,9 @@ public class CustomElementsAdapter extends RealmRecyclerViewAdapter<CityModel, C
                 case R.id.tvTemp:
                 case R.id.tvTitle:
                     if (callbacks != null) callbacks.showDetailView(getAdapterPosition());
+                    break;
+                case R.id.ivFavorite:
+                    if (callbacks != null) callbacks.setFavorite(getAdapterPosition());
                     break;
                 default:
             }

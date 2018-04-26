@@ -49,6 +49,21 @@ public class DataHelper {
         });
     }
 
+    public static void setFavorite(Realm realm, final CityModel cityModel) {
+        realm.executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                RealmResults<CityModel> realmResults = realm.where(CityModel.class).findAll();
+                for (CityModel cm: realmResults) {
+                    if(cm.id.equals(cityModel.id))
+                        cm.setFavorite(true);
+                    else
+                        cm.setFavorite(false);
+                }
+            }
+        });
+    }
+
     public static void deleteObject(Realm realm, final CityModel cityModel) {
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override

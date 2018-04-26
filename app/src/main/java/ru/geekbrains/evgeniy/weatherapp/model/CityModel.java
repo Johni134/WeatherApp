@@ -21,6 +21,8 @@ public class CityModel extends RealmObject implements Parcelable {
 
     public static final String SORT_ID = "sortId";
 
+    public static final String FAVORITE_FIELD = "favoriteField";
+
     public CoordModel coord;
     public RealmList<WeatherModel> weather = new RealmList<>();
     public String base;
@@ -37,6 +39,16 @@ public class CityModel extends RealmObject implements Parcelable {
 
     @SerializedName("name")
     private String name;
+
+    private boolean favorite;
+
+    public boolean isFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        this.favorite = favorite;
+    }
 
     public CityModel() {
     }

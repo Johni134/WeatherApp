@@ -39,15 +39,26 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Title" />
 
+
+
         <TextView
             android:id="@+id/tvTemp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:theme="@style/Widget.Platform.TextView.Description"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toLeftOf="@+id/tvOptionDigit"
+            app:layout_constraintRight_toLeftOf="@+id/ivFavorite"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Temp" />
+
+        <ImageView
+            android:id="@+id/ivFavorite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintRight_toLeftOf="@+id/tvOptionDigit"
+            app:srcCompat="@mipmap/ic_yellow_star_empty"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tvOptionDigit"

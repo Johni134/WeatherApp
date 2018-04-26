@@ -54,7 +54,7 @@ public class CityHistoryActivity extends AppCompatActivity {
         }
 
         textViewTitle.setText(cityTitle);
-        textViewHistory.setText(getString(R.string.history_for_5_days));
+        textViewHistory.setText(getString(R.string.forecast_for_5_days));
 
         if (savedInstanceState != null)
         {
