@@ -18,6 +18,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -64,6 +65,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private final String FILENAME = "avatar.png";
 
     private int navCheckedItem = R.id.nav_cities;
+
+    // favorite city
+    private CityModel favorite;
 
     // realm
     private Realm realm;
@@ -126,6 +130,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (cityWeatherFragment != null) {
             showCityWeather(cityWeatherFragment.getCityModel());
         }
+
+        // set favorite
+        setFavoriteCityFromRealm();
     }
 
     private void initService() {
@@ -193,7 +200,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
                 setNewScreen(mainContentFragment);
                 break;
-            case R.id.nav_favorites:
+            case R.id.nav_favorite:
+                if (favorite != null) {
+                    showCityWeather(favorite);
+                }
+                else {
+                    Toast.makeText(this, R.string.choose_your_favorite_city, Toast.LENGTH_SHORT).show();
+                }
+                break;
             case R.id.nav_feedback:
             default:
                 if (mainContentFragment == null)
@@ -249,7 +263,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.content, cityWeatherFragment);
-        fragmentTransaction.addToBackStack(null);
+        /*
+        if (addToBackStack)
+            fragmentTransaction.addToBackStack(null);
+        */
         fragmentTransaction.commit();
     }
 
@@ -289,6 +306,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void setFavorite(CityModel cityModel) {
         if (mainContentFragment != null) {
             mainContentFragment.setFavorite(cityModel);
+        }
+    }
+
+    private void setFavoriteNavMenu(CityModel favoriteModel) {
+        this.favorite = favoriteModel;
+        Menu menu = navigationView.getMenu();
+        MenuItem menuItem = menu.findItem(R.id.nav_favorite);
+        if (menuItem != null)
+            menuItem.setTitle(favoriteModel.getName());
+    }
+
+    @Override
+    public void setFavoriteCityFromRealm() {
+        CityModel cm = DataHelper.getFavoriteCitySync(realm);
+        if (cm != null) {
+            setFavoriteNavMenu(cm);
         }
     }
 

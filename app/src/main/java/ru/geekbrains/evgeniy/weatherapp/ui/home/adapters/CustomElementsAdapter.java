@@ -68,6 +68,9 @@ public class CustomElementsAdapter extends RealmRecyclerViewAdapter<CityModel, C
         public void onChange(RealmResults<CityModel> cityModels) {
             if(!wasInsertOrUpdate) {
                 notifyDataSetChanged();
+                if (fragment != null && fragment instanceof CityWeatherListener) {
+                    fragment.setFavoriteCityFromRealm();
+                }
             }
             else {
                 wasInsertOrUpdate = false;

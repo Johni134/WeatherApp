@@ -59,6 +59,7 @@ public class CityWeatherFragment extends Fragment implements View.OnClickListene
 
     public void setCityModel(CityModel cityModel) {
         currentCityModel = cityModel;
+        renderWeather(cityModel);
     }
 
     public CityModel getCityModel() {
@@ -120,7 +121,7 @@ public class CityWeatherFragment extends Fragment implements View.OnClickListene
         }.start();
     }
 
-    private void renderWeather(CityModel model) {
+    public void renderWeather(CityModel model) {
         try {
             cityTextView.setText(model.getName().toUpperCase(Locale.US) + ", " + model.sys.country);
 

@@ -316,6 +316,13 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
             ((CityWeatherListener) activity).showForecast(cityModel);
     }
 
+    @Override
+    public void setFavoriteCityFromRealm() {
+        Context activity = getActivity();
+        if (activity instanceof CityWeatherListener)
+            ((CityWeatherListener) activity).setFavoriteCityFromRealm();
+    }
+
     public void setRealm(Realm realm) {
         this.realm = realm;
     }

@@ -90,8 +90,10 @@ public class DataHelper {
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                if (cityModel != null)
+                if (cityModel != null) {
                     cityModel.deleteFromRealm();
+                    setFavoriteWhereNoFavoriteSync(realm);
+                }
             }
         });
     }
@@ -101,8 +103,10 @@ public class DataHelper {
             @Override
             public void execute(Realm realm) {
                 CityModel cityModel = realm.where(CityModel.class).equalTo(CityModel.FIELD_ID, id).findFirst();
-                if (cityModel != null)
+                if (cityModel != null) {
                     cityModel.deleteFromRealm();
+                    setFavoriteWhereNoFavoriteSync(realm);
+                }
             }
         });
     }
@@ -153,5 +157,9 @@ public class DataHelper {
                 }
             }
         });
+    }
+
+    public static CityModel getFavoriteCitySync(Realm realm) {
+        return realm.where(CityModel.class).equalTo(CityModel.FAVORITE_FIELD, true).findFirst();
     }
 }
