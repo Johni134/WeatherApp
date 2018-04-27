@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">WeatherApp</string>
+    <string name="app_name">Weather in the cities</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="menu_edit">Edit</string>
     <string name="menu_delete">Delete</string>
@@ -48,5 +48,6 @@
     <string name="menu_show_forecast">Show forecast</string>
     <string name="show_forecast">Show forecast</string>
     <string name="choose_your_favorite_city">Choose your favorite city in the list of cities</string>
+    <string name="cities_not_exists">Cities is not exist</string>
 
 </resources>

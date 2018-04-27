@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">Погода в городах</string>
     <string name="menu_edit">Редактировать</string>
     <string name="menu_delete">Удалить</string>
     <string name="menu_clear">Очистить</string>
@@ -27,4 +28,5 @@
 
     <string name="forecast_for_5_days">Прогноз на 5 дней</string>
     <string name="choose_your_favorite_city">Выберите любимый город из списка городов</string>
+    <string name="cities_not_exists">Не заданы города в приложении</string>
 </resources>
