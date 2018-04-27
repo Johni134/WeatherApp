@@ -16,7 +16,6 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.realm.OrderedRealmCollection;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmRecyclerViewAdapter;
@@ -32,7 +31,7 @@ interface OnCustomAdapterClickListener{
     void removeView(int position);
     void editView(int position);
     void showDetailView(int position);
-    void showHistory(int position);
+    void showForecast(int position);
     void setFavorite(int position);
 }
 
@@ -148,9 +147,9 @@ public class CustomElementsAdapter extends RealmRecyclerViewAdapter<CityModel, C
     }
 
     @Override
-    public void showHistory(int position) {
+    public void showForecast(int position) {
         if (fragment != null)
-            fragment.showHistory(getItem(position));
+            fragment.showForecast(getItem(position));
     }
 
     @Override
@@ -216,8 +215,8 @@ public class CustomElementsAdapter extends RealmRecyclerViewAdapter<CityModel, C
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.menu_show_history:
-                    if(callbacks != null) callbacks.showHistory(getAdapterPosition());
+                case R.id.menu_show_forecast:
+                    if(callbacks != null) callbacks.showForecast(getAdapterPosition());
                     return true;
                 case R.id.menu_edit:
                     if (callbacks != null) callbacks.editView(getAdapterPosition());

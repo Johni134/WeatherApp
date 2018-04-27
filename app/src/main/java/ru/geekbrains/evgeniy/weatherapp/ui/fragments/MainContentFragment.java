@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -131,9 +130,7 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
                                 adapter.setUpdateString(getString(R.string.last_update));
                                 recyclerView.setAdapter(adapter);
                             }
-                            for (CityModel cm: cityModelArray.list) {
-                                DataHelper.createOrUpdateFromObject(realm, cm);
-                            }
+                            DataHelper.updateAllByList(realm, cityModelArray.list);
                         }
                     });
                 }
@@ -251,7 +248,6 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
     @Override
     public void onEditCity(final Long id, final String name) {
         new Thread() {//Отдельный поток для получения новых данных в фоне
-
             public void run() {
                 handler.post(new Runnable() {
                     public void run() {
@@ -264,8 +260,16 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
     }
 
     @Override
-    public void setFavorite(CityModel cityModel) {
-        DataHelper.setFavorite(realm, cityModel);
+    public void setFavorite(final CityModel cityModel) {
+        new Thread() {
+            public void run() {
+                handler.post(new Runnable() {
+                    public void run() {
+                        DataHelper.setFavorite(realm, cityModel);
+                    }
+                });
+            }
+        }.start();
     }
 
     private void deleteCity(final CityModel cityModel) {
@@ -306,10 +310,10 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
     }
 
     @Override
-    public void showHistory(CityModel cityModel) {
+    public void showForecast(CityModel cityModel) {
         Context activity = getActivity();
         if (activity instanceof CityWeatherListener)
-            ((CityWeatherListener) activity).showHistory(cityModel);
+            ((CityWeatherListener) activity).showForecast(cityModel);
     }
 
     public void setRealm(Realm realm) {

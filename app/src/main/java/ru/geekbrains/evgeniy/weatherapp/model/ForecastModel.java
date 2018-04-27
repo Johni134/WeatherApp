@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
 
 import io.realm.RealmList;
 
-public class HistoryModel implements Parcelable {
+public class ForecastModel implements Parcelable {
     @SerializedName("dt")
     public Long dt;
 
@@ -23,7 +23,7 @@ public class HistoryModel implements Parcelable {
     @SerializedName("dt_txt")
     public String dtTxt;
 
-    protected HistoryModel(Parcel in) {
+    protected ForecastModel(Parcel in) {
         if (in.readByte() == 0) {
             dt = null;
         } else {
@@ -62,15 +62,15 @@ public class HistoryModel implements Parcelable {
         }
     }
 
-    public static final Creator<HistoryModel> CREATOR = new Creator<HistoryModel>() {
+    public static final Creator<ForecastModel> CREATOR = new Creator<ForecastModel>() {
         @Override
-        public HistoryModel createFromParcel(Parcel in) {
-            return new HistoryModel(in);
+        public ForecastModel createFromParcel(Parcel in) {
+            return new ForecastModel(in);
         }
 
         @Override
-        public HistoryModel[] newArray(int size) {
-            return new HistoryModel[size];
+        public ForecastModel[] newArray(int size) {
+            return new ForecastModel[size];
         }
     };
 

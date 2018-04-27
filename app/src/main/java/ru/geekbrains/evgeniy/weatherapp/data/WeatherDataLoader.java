@@ -12,10 +12,9 @@ import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import ru.geekbrains.evgeniy.weatherapp.R;
 import ru.geekbrains.evgeniy.weatherapp.model.CityModel;
 import ru.geekbrains.evgeniy.weatherapp.model.CityModelArray;
-import ru.geekbrains.evgeniy.weatherapp.model.HistoryModelArray;
+import ru.geekbrains.evgeniy.weatherapp.model.ForecastModelArray;
 
 
 /**
@@ -149,18 +148,18 @@ public class WeatherDataLoader {
         return cityModelArray;
     }
 
-    public static HistoryModelArray getHistoryWeatherByID(String id) {
+    public static ForecastModelArray getForecastWeatherByID(String id) {
         String jsonString = getJSONWeatherByParametr(id, "id", MainParametr.FORECAST.getDescription());
         if (jsonString == null)
             return null;
 
         GsonBuilder builder = new GsonBuilder();
         Gson gson = builder.create();
-        HistoryModelArray historyModelArray = gson.fromJson(jsonString, HistoryModelArray.class);
+        ForecastModelArray forecastModelArray = gson.fromJson(jsonString, ForecastModelArray.class);
 
-        if (historyModelArray.cod != ALL_GOOD) {
+        if (forecastModelArray.cod != ALL_GOOD) {
             return null;
         }
-        return historyModelArray;
+        return forecastModelArray;
     }
 }

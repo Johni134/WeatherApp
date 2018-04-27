@@ -21,7 +21,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.home.CityHistoryActivity"
+        <activity android:name=".ui.home.CityForecastActivity"
             android:theme="@style/MyAppTheme"/>
         <service android:name=".services.UpdateService"
             android:exported="false"

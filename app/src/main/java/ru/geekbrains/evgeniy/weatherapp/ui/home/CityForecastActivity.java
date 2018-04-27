@@ -16,15 +16,15 @@ import java.util.List;
 
 import ru.geekbrains.evgeniy.weatherapp.R;
 import ru.geekbrains.evgeniy.weatherapp.data.WeatherDataLoader;
-import ru.geekbrains.evgeniy.weatherapp.model.HistoryModel;
-import ru.geekbrains.evgeniy.weatherapp.model.HistoryModelArray;
-import ru.geekbrains.evgeniy.weatherapp.ui.home.adapters.HistoryAdapter;
+import ru.geekbrains.evgeniy.weatherapp.model.ForecastModel;
+import ru.geekbrains.evgeniy.weatherapp.model.ForecastModelArray;
+import ru.geekbrains.evgeniy.weatherapp.ui.home.adapters.ForecastAdapter;
 
-public class CityHistoryActivity extends AppCompatActivity {
+public class CityForecastActivity extends AppCompatActivity {
 
     private TextView textViewTitle;
-    private TextView textViewHistory;
-    private RecyclerView recyclerViewHistory;
+    private TextView textViewForecast;
+    private RecyclerView recyclerViewForecast;
 
     private Long cityId;
     private String cityTitle;
@@ -33,9 +33,9 @@ public class CityHistoryActivity extends AppCompatActivity {
     public static final String EXTRA_CITY_TITLE = "EXTRA_CITY_TITLE";
     private static final String CONST_PARCELABLE_LIST = "const_parcelable_list";
 
-    private HistoryAdapter historyAdapter;
+    private ForecastAdapter forecastAdapter;
 
-    private List<HistoryModel> historyModelList;
+    private List<ForecastModel> forecastModelList;
 
     Handler handler = new Handler();
 
@@ -43,7 +43,7 @@ public class CityHistoryActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // set layout
-        setContentView(R.layout.history_city_weather);
+        setContentView(R.layout.forecast_city_weather);
         // init views
         initViews();
 
@@ -54,29 +54,29 @@ public class CityHistoryActivity extends AppCompatActivity {
         }
 
         textViewTitle.setText(cityTitle);
-        textViewHistory.setText(getString(R.string.forecast_for_5_days));
+        textViewForecast.setText(getString(R.string.forecast_for_5_days));
 
         if (savedInstanceState != null)
         {
-            historyModelList = savedInstanceState.getParcelableArrayList(CONST_PARCELABLE_LIST);
-            if(historyModelList != null) {
-                historyAdapter = new HistoryAdapter(historyModelList);
-                recyclerViewHistory.setAdapter(historyAdapter);
+            forecastModelList = savedInstanceState.getParcelableArrayList(CONST_PARCELABLE_LIST);
+            if(forecastModelList != null) {
+                forecastAdapter = new ForecastAdapter(forecastModelList);
+                recyclerViewForecast.setAdapter(forecastAdapter);
             }
         }
         else {
             new Thread() {
                 public void run() {
-                    final HistoryModelArray historyModelArray = WeatherDataLoader.getHistoryWeatherByID(cityId.toString());
+                    final ForecastModelArray forecastModelArray = WeatherDataLoader.getForecastWeatherByID(cityId.toString());
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            if (historyModelArray == null || historyModelArray.list.size() == 0) {
+                            if (forecastModelArray == null || forecastModelArray.list.size() == 0) {
                                 Toast.makeText(getApplicationContext(), getString(R.string.place_not_found), Toast.LENGTH_SHORT).show();
                             } else {
-                                historyModelList = historyModelArray.list;
-                                historyAdapter = new HistoryAdapter(historyModelList);
-                                recyclerViewHistory.setAdapter(historyAdapter);
+                                forecastModelList = forecastModelArray.list;
+                                forecastAdapter = new ForecastAdapter(forecastModelList);
+                                recyclerViewForecast.setAdapter(forecastAdapter);
                             }
                         }
                     });
@@ -87,17 +87,17 @@ public class CityHistoryActivity extends AppCompatActivity {
 
     private void initViews() {
         textViewTitle = findViewById(R.id.tvTitle);
-        textViewHistory = findViewById(R.id.tvHistory);
-        recyclerViewHistory = findViewById(R.id.rvHistory);
+        textViewForecast = findViewById(R.id.tvForecast);
+        recyclerViewForecast = findViewById(R.id.rvForecast);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        recyclerViewHistory.setLayoutManager(linearLayoutManager);
-        recyclerViewHistory.setHasFixedSize(true);
+        recyclerViewForecast.setLayoutManager(linearLayoutManager);
+        recyclerViewForecast.setHasFixedSize(true);
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putParcelableArrayList(CONST_PARCELABLE_LIST, (ArrayList<? extends Parcelable>) historyModelList);
+        outState.putParcelableArrayList(CONST_PARCELABLE_LIST, (ArrayList<? extends Parcelable>) forecastModelList);
         super.onSaveInstanceState(outState);
     }
 }

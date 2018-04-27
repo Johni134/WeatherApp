@@ -2,7 +2,6 @@ package ru.geekbrains.evgeniy.weatherapp.ui.fragments;
 
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -201,7 +200,7 @@ public class CityWeatherFragment extends Fragment implements View.OnClickListene
             case R.id.buttonShowHistory:
                 Context activity = getActivity();
                 if (activity instanceof CityWeatherListener)
-                    ((CityWeatherListener) activity).showHistory(currentCityModel);
+                    ((CityWeatherListener) activity).showForecast(currentCityModel);
                 break;
         }
     }

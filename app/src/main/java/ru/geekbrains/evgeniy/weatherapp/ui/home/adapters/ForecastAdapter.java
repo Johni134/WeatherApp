@@ -7,48 +7,47 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import ru.geekbrains.evgeniy.weatherapp.R;
 import ru.geekbrains.evgeniy.weatherapp.data.SupportingLib;
-import ru.geekbrains.evgeniy.weatherapp.model.HistoryModel;
+import ru.geekbrains.evgeniy.weatherapp.model.ForecastModel;
 
-public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder> {
+public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ForecastViewHolder> {
 
-    List<HistoryModel> historyModelList;
+    List<ForecastModel> forecastModelList;
 
-    public HistoryAdapter(List<HistoryModel> historyModelList) {
-        this.historyModelList = historyModelList;
+    public ForecastAdapter(List<ForecastModel> forecastModelList) {
+        this.forecastModelList = forecastModelList;
     }
 
     @NonNull
     @Override
-    public HistoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ForecastViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_history, parent, false);
 
-        return new HistoryViewHolder(v);
+        return new ForecastViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull HistoryViewHolder holder, int position) {
-        HistoryModel hm = historyModelList.get(position);
+    public void onBindViewHolder(@NonNull ForecastViewHolder holder, int position) {
+        ForecastModel hm = forecastModelList.get(position);
         if(hm != null)
             holder.bind(hm);
     }
 
     @Override
     public int getItemCount() {
-        return historyModelList.size();
+        return forecastModelList.size();
     }
 
-    class HistoryViewHolder extends RecyclerView.ViewHolder  {
+    class ForecastViewHolder extends RecyclerView.ViewHolder  {
 
         private TextView textViewLastUpdate;
         private TextView textViewTemp;
-        public HistoryViewHolder(View itemView) {
+        public ForecastViewHolder(View itemView) {
             super(itemView);
 
             initViews(itemView);
@@ -60,7 +59,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
         }
 
 
-        public void bind(HistoryModel hm) {
+        public void bind(ForecastModel hm) {
             textViewTemp.setText(hm.main.getTempC());
             textViewLastUpdate.setText(SupportingLib.getLastUpdate(hm.dt));
         }

@@ -13,11 +13,32 @@ import ru.geekbrains.evgeniy.weatherapp.ui.home.adapters.CustomElementsAdapter;
 
 public class DataHelper {
 
+    public static void setFavoriteWhereNoFavoriteSync(Realm realm) {
+        CityModel favoriteCity = realm.where(CityModel.class).equalTo(CityModel.FAVORITE_FIELD, true).findFirst();
+        if (favoriteCity == null) {
+            CityModel cm = realm.where(CityModel.class).findFirst();
+            if (cm != null)
+                cm.setFavorite(true);
+        }
+    }
+
     public static void createOrUpdateFromObject(Realm realm, final CityModel cityModel) {
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
                 createOrUpdateFromObjectSync(realm, cityModel);
+            }
+        });
+    }
+
+    public static void updateAllByList(Realm realm, final ArrayList<CityModel> cityModelArray) {
+        realm.executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                for (CityModel cm: cityModelArray) {
+                    createOrUpdateFromObjectSync(realm, cm);
+                }
+                setFavoriteWhereNoFavoriteSync(realm);
             }
         });
     }
@@ -49,13 +70,14 @@ public class DataHelper {
         });
     }
 
-    public static void setFavorite(Realm realm, final CityModel cityModel) {
+    public static void setFavorite(Realm realm, CityModel cityModel) {
+        final Long id = cityModel.id;
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
                 RealmResults<CityModel> realmResults = realm.where(CityModel.class).findAll();
                 for (CityModel cm: realmResults) {
-                    if(cm.id.equals(cityModel.id))
+                    if(cm.id.equals(id))
                         cm.setFavorite(true);
                     else
                         cm.setFavorite(false);

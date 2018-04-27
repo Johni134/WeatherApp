@@ -1,14 +1,11 @@
 package ru.geekbrains.evgeniy.weatherapp.ui.home;
 
 
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
@@ -257,12 +254,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public void showHistory(CityModel cityModel) {
+    public void showForecast(CityModel cityModel) {
         if (cityModel != null)
         {
-            Intent intent = new Intent(this, CityHistoryActivity.class);
-            intent.putExtra(CityHistoryActivity.EXTRA_CITY_TITLE, cityModel.getNameWithCountry());
-            intent.putExtra(CityHistoryActivity.EXTRA_CITY_ID, cityModel.id);
+            Intent intent = new Intent(this, CityForecastActivity.class);
+            intent.putExtra(CityForecastActivity.EXTRA_CITY_TITLE, cityModel.getNameWithCountry());
+            intent.putExtra(CityForecastActivity.EXTRA_CITY_ID, cityModel.id);
             startActivity(intent);
         }
     }
