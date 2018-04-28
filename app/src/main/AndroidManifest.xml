@@ -23,6 +23,19 @@
         </activity>
         <activity android:name=".ui.home.CityForecastActivity"
             android:theme="@style/MyAppTheme"/>
+        <receiver
+            android:name=".widget.WidgetCities"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_provider" />
+        </receiver>
+        <service
+            android:name=".services.CitiesWidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
         <service android:name=".services.UpdateService"
             android:exported="false"
             />

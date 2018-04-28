@@ -162,4 +162,8 @@ public class DataHelper {
     public static CityModel getFavoriteCitySync(Realm realm) {
         return realm.where(CityModel.class).equalTo(CityModel.FAVORITE_FIELD, true).findFirst();
     }
+
+    public static RealmResults<CityModel> getDataForWidget(Realm realm) {
+        return realm.where(CityModel.class).findAll().sort(CityModel.FAVORITE_FIELD).sort(CityModel.SORT_ID);
+    }
 }
