@@ -2,6 +2,7 @@ package ru.geekbrains.evgeniy.weatherapp.ui.home.adapters;
 
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -61,6 +62,12 @@ public class CustomElementsAdapter extends RealmRecyclerViewAdapter<CityModel, C
         this.dataSet.addChangeListener(realmChangeListener);
         this.realm = realm;
         setHasStableIds(true);
+    }
+
+    @Nullable
+    @Override
+    public CityModel getItem(int index) {
+        return super.getItem(index);
     }
 
     private RealmChangeListener realmChangeListener = new RealmChangeListener<RealmResults<CityModel>>() {

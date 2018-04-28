@@ -7,6 +7,7 @@ import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
+import io.realm.Sort;
 import ru.geekbrains.evgeniy.weatherapp.model.CityModel;
 import ru.geekbrains.evgeniy.weatherapp.model.CityModelArray;
 import ru.geekbrains.evgeniy.weatherapp.ui.home.adapters.CustomElementsAdapter;
@@ -170,6 +171,6 @@ public class DataHelper {
     }
 
     public static RealmResults<CityModel> getDataForWidget(Realm realm) {
-        return realm.where(CityModel.class).findAll().sort(CityModel.FAVORITE_FIELD).sort(CityModel.SORT_ID);
+        return realm.where(CityModel.class).findAll().sort(CityModel.FAVORITE_FIELD, Sort.DESCENDING, CityModel.SORT_ID, Sort.ASCENDING);
     }
 }
