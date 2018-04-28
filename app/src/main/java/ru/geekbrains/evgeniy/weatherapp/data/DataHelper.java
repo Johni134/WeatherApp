@@ -46,13 +46,19 @@ public class DataHelper {
     public static void createOrUpdateFromObjectSync(Realm realm, CityModel cityModel) {
         CityModel currentCM = realm.where(CityModel.class).equalTo(CityModel.FIELD_ID, cityModel.id).findFirst();
         Long oldSortId = null;
-        if(currentCM != null)
+        boolean isFavorite = false;
+        if(currentCM != null) {
             oldSortId = currentCM.sortId;
+            isFavorite = currentCM.isFavorite();
+        }
         CityModel newCM = realm.copyToRealmOrUpdate(cityModel);
         newCM.sortId = oldSortId;
         if (newCM.sortId == null) {
             Number maxSortId = realm.where(CityModel.class).max(CityModel.SORT_ID);
             newCM.sortId = (maxSortId == null) ? 1 : maxSortId.longValue() + 1;
+        }
+        if (newCM.isFavorite() != isFavorite) {
+            newCM.setFavorite(isFavorite);
         }
     }
 
