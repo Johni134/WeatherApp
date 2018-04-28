@@ -16,6 +16,8 @@ import io.realm.RealmResults;
 import ru.geekbrains.evgeniy.weatherapp.R;
 import ru.geekbrains.evgeniy.weatherapp.WeatherApplication;
 import ru.geekbrains.evgeniy.weatherapp.data.DataHelper;
+import ru.geekbrains.evgeniy.weatherapp.data.SupportingLib;
+import ru.geekbrains.evgeniy.weatherapp.data.WorkWithSharedPreferences;
 import ru.geekbrains.evgeniy.weatherapp.model.CityModel;
 
 public class WidgetCitiesFactory  implements RemoteViewsService.RemoteViewsFactory, RealmChangeListener<RealmResults<CityModel>> {
@@ -25,10 +27,15 @@ public class WidgetCitiesFactory  implements RemoteViewsService.RemoteViewsFacto
     private List<CityModel> records;
     private Context context;
     private final Handler handler = new Handler();
+    private int cities_num = 1;
 
     public WidgetCitiesFactory(Context context, Intent intent) {
         this.context = context;
         realm = Realm.getInstance(WeatherApplication.getRealmConf());
+        // init shared pref
+        WorkWithSharedPreferences.initSharedPreferences(context);
+
+        cities_num = WorkWithSharedPreferences.getProperty(WidgetConfigureActivity.PREFS_CITIES_NUM, 1);
     }
 
     @Override
@@ -69,12 +76,37 @@ public class WidgetCitiesFactory  implements RemoteViewsService.RemoteViewsFacto
 
     @Override
     public RemoteViews getViewAt(int position) {
-        RemoteViews rView = new RemoteViews(context.getPackageName(),
-                R.layout.item_widget);
-        rView.setTextViewText(R.id.tvWidgetTitle, records.get(position).getNameWithCountry());
-        rView.setTextViewText(R.id.tvWidgetTemp, records.get(position).getTempC());
+        RemoteViews rView;
+        CityModel cm = records.get(position);
+
+        if (cm == null) return null;
+
+        if (getCount() == 1) {
+            rView = new RemoteViews(context.getPackageName(),
+                    R.layout.item_widget_one_city);
+            if (cm.main != null) {
+                rView.setTextViewText(R.id.tvWidgetHumidity, context.getString(R.string.humidity) + ": " + cm.main.humidity + "%");
+                rView.setTextViewText(R.id.tvWidgetPressure, context.getString(R.string.pressure) + ": " + cm.main.pressure + " hPa");
+            }
+            if (cm.sys != null) {
+                rView.setTextViewText(R.id.tvWidgetSunrise, context.getString(R.string.sunrise) + ": " + SupportingLib.getTime(cm.sys.sunrise));
+                rView.setTextViewText(R.id.tvWidgetSunset, context.getString(R.string.sunset) + ": " + SupportingLib.getTime(cm.sys.sunset));
+            }
+            if (cm.weather.size() > 0) {
+                String description = cm.weather.first().description;
+                if (description.length() > 2) {
+                    description = Character.toUpperCase(description.charAt(0)) + description.substring(1);
+                }
+                rView.setTextViewText(R.id.tvWidgetDescription, description);
+            }
+        } else {
+            rView = new RemoteViews(context.getPackageName(),
+                    R.layout.item_widget);
+        }
+        rView.setTextViewText(R.id.tvWidgetTitle, cm.getNameWithCountry());
+        rView.setTextViewText(R.id.tvWidgetTemp, cm.getTempC());
         Intent clickIntent = new Intent();
-        clickIntent.putExtra(WidgetCities.CITY_DESCRIPTION, records.get(position).getNameWithCountry() + ": " + records.get(position).getTempC());
+        clickIntent.putExtra(WidgetCities.CITY_DESCRIPTION, cm.getNameWithCountry() + ": " + cm.getTempC());
         rView.setOnClickFillInIntent(R.id.text, clickIntent);
 
         return  rView;
@@ -112,8 +144,8 @@ public class WidgetCitiesFactory  implements RemoteViewsService.RemoteViewsFacto
     }
 
     private void updateRecords() {
-        if (dataRecords.size() > 10) {
-            records = realm.copyFromRealm(dataRecords.subList(0, 10));
+        if (dataRecords.size() > cities_num) {
+            records = realm.copyFromRealm(dataRecords.subList(0, cities_num));
         }
         else {
             records = realm.copyFromRealm(dataRecords.subList(0, dataRecords.size()));

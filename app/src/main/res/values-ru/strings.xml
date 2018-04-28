@@ -7,7 +7,7 @@
     <string name="test_snackbar">Тест snackbar</string>
     <string name="cities">Список городов</string>
     <string name="favorite">Выбранный город</string>
-    <string name="feedback">Обратная связь</string>
+    <string name="settings">Настройки</string>
     <string name="about">О программе</string>
 
     <string name="place_not_found">Извините, погодные данные не найдены.</string>
@@ -29,4 +29,19 @@
     <string name="forecast_for_5_days">Прогноз на 5 дней</string>
     <string name="choose_your_favorite_city">Выберите любимый город из списка городов</string>
     <string name="cities_not_exists">Не заданы города в приложении</string>
+    <string name="choose_cities_num">Выберите количество городов:</string>
+    <string name="add_widget">Добавить виджет</string>
+    <string name="humidity">Влажность</string>
+    <string name="pressure">Давление</string>
+    <string name="sunrise">Восход</string>
+    <string name="sunset">Закат</string>
+    <string name="update_every_5_minutes">Обновлять каждые 5 минут</string>
+    <string name="full_about">Создано Коротченко Евгением Сергеевичем (kec@inbox.ru)</string>
+
+    <string-array name="cities_num_selection">
+        <item>Только избранный</item>
+        <item>5</item>
+        <item>10</item>
+        <item>Все</item>
+    </string-array>
 </resources>

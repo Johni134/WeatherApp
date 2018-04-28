@@ -10,12 +10,18 @@ public class SupportingLib {
 
         long time = dt * (long) 1000;
         Date date = new Date(time);
-        SimpleDateFormat format = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy a");
-        format.setTimeZone(TimeZone.getTimeZone("GMT"));
+        SimpleDateFormat format = new SimpleDateFormat("EEE MMM dd HH:mm:ss");
+        //format.setTimeZone(TimeZone.getTimeZone("GMT"));
 
         return format.format(date);
     }
 
-
+    public static String getTime(Long dt) {
+        long time = dt * (long) 1000;
+        Date date = new Date(time);
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+        //format.setTimeZone(TimeZone.getTimeZone("GMT"));
+        return format.format(date);
+    }
 
 }

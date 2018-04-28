@@ -8,7 +8,7 @@
     <string name="test_snackbar">Test snackbar</string>
     <string name="cities">Cities</string>
     <string name="favorite">Favorite</string>
-    <string name="feedback">Feedback</string>
+    <string name="settings">Settings</string>
     <string name="about">About</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -49,5 +49,21 @@
     <string name="show_forecast">Show forecast</string>
     <string name="choose_your_favorite_city">Choose your favorite city in the list of cities</string>
     <string name="cities_not_exists">Cities is not exist</string>
+    <string name="choose_cities_num">Choose number of cities:</string>
+    <string name="add_widget">Add widget</string>
+    <string name="humidity">Humidity</string>
+    <string name="pressure">Pressure</string>
+    <string name="sunrise">Sunrise</string>
+    <string name="sunset">Sunset</string>
+    <string name="update_every_5_minutes">Update every 5 minutes</string>
+    <string name="full_about">Created by Korotchenko Evgeniy Sergeevich (kec@inbox.ru)</string>
+
+    <string-array name="cities_num_selection">
+        <item>Just favorite</item>
+        <item>5</item>
+        <item>10</item>
+        <item>All</item>
+    </string-array>
+
 
 </resources>

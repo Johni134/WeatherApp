@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import ru.geekbrains.evgeniy.weatherapp.R;
+import ru.geekbrains.evgeniy.weatherapp.data.SupportingLib;
 import ru.geekbrains.evgeniy.weatherapp.data.WeatherDataLoader;
 import ru.geekbrains.evgeniy.weatherapp.model.CityModel;
 
@@ -132,14 +133,12 @@ public class CityWeatherFragment extends Fragment implements View.OnClickListene
                 description = model.weather.get(0).description.toUpperCase(Locale.US);
                 id = model.weather.get(0).id;
             }
-            detailsTextView.setText(description + "\n" + "Humidity: "
-                                    + model.main.humidity + "%" + "\n" + "Pressure: " + model.main.pressure + " hPa");
+            detailsTextView.setText(description + "\n" + getString(R.string.humidity) + ": "
+                                    + model.main.humidity + "%" + "\n" + getString(R.string.pressure) + ": " + model.main.pressure + " hPa");
 
             currentTemperatureTextView.setText(model.getTempC());
 
-            DateFormat df = DateFormat.getDateTimeInstance();
-            String updatedOn = df.format(new Date(model.dt * 1000));
-            updatedTextView.setText("Last update: " + updatedOn);
+            updatedTextView.setText(getString(R.string.last_update) + SupportingLib.getLastUpdate(model.dt));
 
             setWeatherIcon(id, model.sys.sunrise * 1000,
                     model.sys.sunset * 1000);

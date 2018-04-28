@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relativeLayout">
+
+    <TextView
+        android:id="@+id/tvWidgetTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_toLeftOf="@+id/tvWidgetTemp"
+        android:theme="@style/Widget.Platform.TextView.Title"
+        android:textColor="@color/widget_text"
+        tools:text="Title" />
+
+    <TextView
+        android:id="@+id/tvWidgetTemp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:theme="@style/Widget.Platform.TextView.Description"
+        android:textColor="@color/widget_text"
+        tools:text="Temp" />
+
+    <TextView
+        android:id="@+id/tvWidgetPressure"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/tvWidgetTemp"
+        android:theme="@style/Widget.Platform.TextView.Update"
+        android:textColor="@color/widget_text"
+        tools:text="Pressure" />
+
+    <TextView
+        android:id="@+id/tvWidgetHumidity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvWidgetTemp"
+        android:layout_toEndOf="@+id/tvWidgetPressure"
+        android:textColor="@color/widget_text"
+        android:theme="@style/Widget.Platform.TextView.Update"
+        tools:text="Humidity" />
+
+    <TextView
+        android:id="@+id/tvWidgetSunrise"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/tvWidgetPressure"
+        android:theme="@style/Widget.Platform.TextView.Update"
+        android:textColor="@color/widget_text"
+        tools:text="Sunrise" />
+
+    <TextView
+        android:id="@+id/tvWidgetSunset"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvWidgetPressure"
+        android:layout_toEndOf="@+id/tvWidgetSunrise"
+        android:theme="@style/Widget.Platform.TextView.Update"
+        android:textColor="@color/widget_text"
+        tools:text="Sunset" />
+
+    <TextView
+        android:id="@+id/tvWidgetDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvWidgetPressure"
+        android:layout_toEndOf="@+id/tvWidgetSunset"
+        android:textColor="@color/widget_text"
+        android:theme="@style/Widget.Platform.TextView.Update"
+        tools:text="Description" />
+
+</RelativeLayout>

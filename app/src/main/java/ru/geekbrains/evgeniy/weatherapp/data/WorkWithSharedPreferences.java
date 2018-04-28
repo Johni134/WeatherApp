@@ -13,7 +13,8 @@ public class WorkWithSharedPreferences {
     private static SharedPreferences sharedPrefPrivate = null;
 
     public static void initSharedPreferences(Context context) {
-        sharedPrefPrivate = context.getSharedPreferences(
+        if (sharedPrefPrivate == null)
+            sharedPrefPrivate = context.getSharedPreferences(
                 context.getResources().getString(R.string.preference_file_key), Context.MODE_PRIVATE);
     }
 
@@ -25,6 +26,16 @@ public class WorkWithSharedPreferences {
 
     public static int getProperty(String propertyName, int defValue) {
         return sharedPrefPrivate.getInt(propertyName, defValue);
+    }
+
+    public static void saveProperty(String propertyName, boolean value) {
+        SharedPreferences.Editor editor = sharedPrefPrivate.edit();
+        editor.putBoolean(propertyName, value);
+        editor.apply();
+    }
+
+    public static boolean getProperty(String propertyName, boolean defValue) {
+        return sharedPrefPrivate.getBoolean(propertyName, defValue);
     }
 
     private static void saveProperty(String propertyName, String value) {

@@ -1,6 +1,7 @@
 package ru.geekbrains.evgeniy.weatherapp.ui.home;
 
 
+import android.app.Application;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -26,6 +27,7 @@ import android.widget.Toast;
 
 import io.realm.Realm;
 import ru.geekbrains.evgeniy.weatherapp.R;
+import ru.geekbrains.evgeniy.weatherapp.WeatherApplication;
 import ru.geekbrains.evgeniy.weatherapp.data.DataHelper;
 import ru.geekbrains.evgeniy.weatherapp.data.WorkWithFiles;
 import ru.geekbrains.evgeniy.weatherapp.data.WorkWithSharedPreferences;
@@ -37,14 +39,12 @@ import ru.geekbrains.evgeniy.weatherapp.ui.fragments.DeleteEditCityListener;
 import ru.geekbrains.evgeniy.weatherapp.ui.fragments.MainContentFragment;
 import ru.geekbrains.evgeniy.weatherapp.model.CityModel;
 import ru.geekbrains.evgeniy.weatherapp.ui.fragments.AddCityListener;
+import ru.geekbrains.evgeniy.weatherapp.ui.fragments.SettingsFragment;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, AddCityListener, CityWeatherListener, DeleteEditCityListener {
 
-    // service
-    private boolean shouldUnbind = false;
-    private ServiceConnection serviceConnection;
-    private UpdateService updateService;
+
 
     // views
     private NavigationView navigationView;
@@ -54,15 +54,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private MainContentFragment mainContentFragment = null;
     private AboutFragment aboutFragment = null;
     private CityWeatherFragment cityWeatherFragment = null;
+    private SettingsFragment settingsFragment = null;
     private Fragment curFragment = null;
     FragmentManager fragmentManager = getSupportFragmentManager();
 
     // const
-    private final String EXTRA_CURRENT_CHECKED_NAV_ITEM = "current_nav_item";
-    private final String EXTRA_MAIN_ARRAYLIST = "main_arraylist";
-    private final String EXTRA_CITY_MODEL_KEY = "city_model_key";
+    private static final String EXTRA_CURRENT_CHECKED_NAV_ITEM = "current_nav_item";
+    private static final String EXTRA_MAIN_ARRAYLIST = "main_arraylist";
+    private static final String EXTRA_CITY_MODEL_KEY = "city_model_key";
 
-    private final String FILENAME = "avatar.png";
+    private static final String FILENAME = "avatar.png";
 
     private int navCheckedItem = R.id.nav_cities;
 
@@ -87,9 +88,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // update existing fields
         updateExistingFields();
 
-        // init service
-        initService();
-
         // init drawer
         drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -111,8 +109,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             View header = navigationView.getHeaderView(0);
             ImageView iv = header.findViewById(R.id.imageView);
             iv.setImageBitmap(bmFromFile);
-
-
         }
 
         // init shared pref key
@@ -133,44 +129,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         // set favorite
         setFavoriteCityFromRealm();
+
+
     }
 
-    private void initService() {
-        serviceConnection = new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-                updateService = ((UpdateService.UpdateWeathersBinder) service).getService();
-                shouldUnbind = true;
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-                shouldUnbind = false;
-            }
-        };
-        onBindService();
-    }
-
-    public void onBindService() {
-        Intent intent = new Intent(getBaseContext(), UpdateService.class);
-        bindService(intent, serviceConnection, BIND_AUTO_CREATE);
-    }
-    public void onUnbindService() {
-        if(shouldUnbind) {
-            unbindService(serviceConnection);
-        }
-        shouldUnbind = false;
-    }
-
-    public void updateWeathers() {
-        if(!shouldUnbind) {
-            Toast.makeText(this, getString(R.string.place_not_found), Toast.LENGTH_SHORT).show();
-            onBindService();
-            return;
-        }
-
-        updateService.updateWeathers();
-    }
 
     private void initViews() {
         navigationView = findViewById(R.id.nav_view);
@@ -208,7 +170,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     Toast.makeText(this, R.string.choose_your_favorite_city, Toast.LENGTH_SHORT).show();
                 }
                 break;
-            case R.id.nav_feedback:
+            case R.id.nav_settings:
+                if(settingsFragment == null) {
+                    settingsFragment = new SettingsFragment();
+                }
+                setNewScreen(settingsFragment);
+                break;
             default:
                 if (mainContentFragment == null)
                     mainContentFragment = new MainContentFragment();
@@ -220,8 +187,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
-    // setting new screen by hiding old fragment and adding/showing new one
-    //
+    // setting new fragment
     private void setNewScreen(Fragment fragment) {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.content, fragment);
@@ -232,6 +198,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
+        }
+        else if(navCheckedItem != R.id.nav_cities) {
+            onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_cities));
         }
         else {
             super.onBackPressed();
@@ -263,10 +232,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.content, cityWeatherFragment);
-        /*
-        if (addToBackStack)
-            fragmentTransaction.addToBackStack(null);
-        */
         fragmentTransaction.commit();
     }
 
@@ -284,7 +249,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        onUnbindService();
         realm.close();
     }
 
@@ -325,4 +289,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    public void updateWeathers() {
+        Application app = getApplication();
+        if (app instanceof WeatherApplication) {
+            ((WeatherApplication) app).updateWeathers();
+        }
+    }
 }

@@ -28,6 +28,7 @@ public class WeatherDataLoader {
     private static final String OPEN_WEATHER_MAP_API_OKHTTP = "http://api.openweathermap.org/data/2.5/%s";
     private static final String KEY = "x-api-key";
     private static final String APIKEY = "APPID";
+    private static final String LOCALE = "lang";
     private static final String RESPONSE = "cod";
     private static final String NEW_LINE = "\n";
     private static final int ALL_GOOD = 200;
@@ -61,6 +62,7 @@ public class WeatherDataLoader {
         urlBuilder.addQueryParameter(parametr, query);
         urlBuilder.addQueryParameter(APIKEY, OPEN_WEATHER_MAPS_APP_ID);
         urlBuilder.addQueryParameter("units", "metric");
+        urlBuilder.addQueryParameter(LOCALE, System.getProperty("user.language"));
         String url = urlBuilder.build().toString();
 
         // get request

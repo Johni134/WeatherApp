@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tool="http://schemas.android.com/tools">
+
+    <TextView
+        android:id="@+id/tvChooseCitiesNum"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/choose_cities_num"
+        android:theme="@style/Widget.Platform.TextView.Title"
+        tool:text="Choose cities num"/>
+
+    <Spinner
+        android:id="@+id/spinnerCitiesNum"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvChooseCitiesNum"
+        android:entries="@array/cities_num_selection"
+        android:textAlignment="textStart"
+        android:theme="@style/Widget.Platform.TextView.Description" />
+
+    <Button
+        android:id="@+id/buttonAdd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/spinnerCitiesNum"
+        android:layout_centerHorizontal="true"
+        android:text="@string/add_widget"
+        tool:text="Add widget"
+        />
+</RelativeLayout>

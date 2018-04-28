@@ -7,15 +7,23 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import io.realm.Realm;
 import ru.geekbrains.evgeniy.weatherapp.WeatherApplication;
 import ru.geekbrains.evgeniy.weatherapp.data.DataHelper;
 import ru.geekbrains.evgeniy.weatherapp.data.WeatherDataLoader;
+import ru.geekbrains.evgeniy.weatherapp.data.WorkWithSharedPreferences;
 import ru.geekbrains.evgeniy.weatherapp.model.CityModelArray;
+import ru.geekbrains.evgeniy.weatherapp.ui.fragments.SettingsFragment;
 
 public class UpdateService extends Service {
 
     private UpdateWeathersBinder binder = new UpdateWeathersBinder();
+    Timer timer;
+    TimerTask tTask;
+    private long interval = 300000;
 
     @Nullable
     @Override
@@ -32,6 +40,21 @@ public class UpdateService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        timer = new Timer();
+        schedule();
+    }
+
+    void schedule() {
+        if (tTask != null) tTask.cancel();
+        if (interval > 0) {
+            tTask = new TimerTask() {
+                public void run() {
+                    if (WorkWithSharedPreferences.getProperty(SettingsFragment.PREF_UPDATE_EVERY_5_MINUTES, false))
+                        updateWeathers();
+                }
+            };
+            timer.schedule(tTask, 1000, interval);
+        }
     }
 
     @Override
@@ -41,6 +64,7 @@ public class UpdateService extends Service {
 
     @Override
     public boolean onUnbind(Intent intent) {
+        tTask.cancel();
         return super.onUnbind(intent);
     }
 
