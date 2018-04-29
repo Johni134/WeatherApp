@@ -288,11 +288,4 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             setFavoriteNavMenu(cm);
         }
     }
-
-    public void updateWeathers() {
-        Application app = getApplication();
-        if (app instanceof WeatherApplication) {
-            ((WeatherApplication) app).updateWeathers();
-        }
-    }
 }

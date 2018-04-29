@@ -65,9 +65,8 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
                 DataHelper.clear(realm);
                 return true;
             case R.id.menu_refresh:
-                Activity activity = getActivity();
-                if(activity != null && activity instanceof MainActivity) {
-                    ((MainActivity) activity).updateWeathers();
+                if (adapter == null) {
+                    updateWeathers(getString(R.string.default_cities));
                 }
                 else {
                     updateWeathers(adapter.getIDs());
