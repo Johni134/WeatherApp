@@ -32,6 +32,7 @@ interface OnCustomAdapterClickListener{
     void removeView(int position);
     void editView(int position);
     void showDetailView(int position);
+    void showAirPollution(int position);
     void showForecast(int position);
     void setFavorite(int position);
 }
@@ -157,6 +158,12 @@ public class CustomElementsAdapter extends RealmRecyclerViewAdapter<CityModel, C
     }
 
     @Override
+    public void showAirPollution(int position) {
+        if (fragment != null)
+            fragment.showAirPollution(getItem(position));
+    }
+
+    @Override
     public void showForecast(int position) {
         if (fragment != null)
             fragment.showForecast(getItem(position));
@@ -227,6 +234,9 @@ public class CustomElementsAdapter extends RealmRecyclerViewAdapter<CityModel, C
             switch (item.getItemId()) {
                 case R.id.menu_show_forecast:
                     if(callbacks != null) callbacks.showForecast(getAdapterPosition());
+                    return true;
+                case R.id.menu_show_air_pollution:
+                    if (callbacks != null) callbacks.showAirPollution(getAdapterPosition());
                     return true;
                 case R.id.menu_edit:
                     if (callbacks != null) callbacks.editView(getAdapterPosition());

@@ -3,7 +3,7 @@
     android:minWidth="320dp"
     android:minHeight="60dp"
     android:configure="ru.geekbrains.evgeniy.weatherapp.widget.WidgetConfigureActivity"
-    android:updatePeriodMillis="86400000"
+    android:updatePeriodMillis="300000"
     android:initialLayout="@layout/widget_list"
     android:resizeMode="horizontal|vertical" >
 </appwidget-provider>

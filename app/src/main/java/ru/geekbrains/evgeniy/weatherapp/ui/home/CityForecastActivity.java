@@ -20,6 +20,9 @@ import ru.geekbrains.evgeniy.weatherapp.model.ForecastModel;
 import ru.geekbrains.evgeniy.weatherapp.model.ForecastModelArray;
 import ru.geekbrains.evgeniy.weatherapp.ui.home.adapters.ForecastAdapter;
 
+import static ru.geekbrains.evgeniy.weatherapp.data.SupportingLib.EXTRA_CITY_ID;
+import static ru.geekbrains.evgeniy.weatherapp.data.SupportingLib.EXTRA_CITY_TITLE;
+
 public class CityForecastActivity extends AppCompatActivity {
 
     private TextView textViewTitle;
@@ -29,8 +32,6 @@ public class CityForecastActivity extends AppCompatActivity {
     private Long cityId;
     private String cityTitle;
 
-    public static final String EXTRA_CITY_ID = "EXTRA_CITY_ID";
-    public static final String EXTRA_CITY_TITLE = "EXTRA_CITY_TITLE";
     private static final String CONST_PARCELABLE_LIST = "const_parcelable_list";
 
     private ForecastAdapter forecastAdapter;
@@ -54,7 +55,7 @@ public class CityForecastActivity extends AppCompatActivity {
         }
 
         textViewTitle.setText(cityTitle);
-        textViewForecast.setText(getString(R.string.forecast_for_5_days));
+        //textViewForecast.setText(getString(R.string.forecast_for_5_days));
 
         if (savedInstanceState != null)
         {

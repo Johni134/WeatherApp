@@ -14,7 +14,9 @@ import okhttp3.Request;
 import okhttp3.Response;
 import ru.geekbrains.evgeniy.weatherapp.model.CityModel;
 import ru.geekbrains.evgeniy.weatherapp.model.CityModelArray;
+import ru.geekbrains.evgeniy.weatherapp.model.CoordModel;
 import ru.geekbrains.evgeniy.weatherapp.model.ForecastModelArray;
+import ru.geekbrains.evgeniy.weatherapp.model.PollutionModelArray;
 
 
 /**
@@ -25,6 +27,7 @@ import ru.geekbrains.evgeniy.weatherapp.model.ForecastModelArray;
 public class WeatherDataLoader {
 
     private static final String OPEN_WEATHER_MAP_API = "http://api.openweathermap.org/data/2.5/%s?%s=%s&units=metric";
+    private static final String OPEN_WEATHER_MAP_POLLUTION_API_OKHTTP = "http://api.openweathermap.org/pollution/v1/%s/%s/current.json";
     private static final String OPEN_WEATHER_MAP_API_OKHTTP = "http://api.openweathermap.org/data/2.5/%s";
     private static final String KEY = "x-api-key";
     private static final String APIKEY = "APPID";
@@ -50,6 +53,31 @@ public class WeatherDataLoader {
 
         public String getDescription() {return description;}
     };
+
+    private static String getJSONCurrentPollutionByCoordsAndType(String type, CoordModel coordModel) {
+
+        String coordString = coordModel.lat + "," + coordModel.lon;
+
+        // init
+        OkHttpClient okHttpClient = new OkHttpClient();
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(String.format(OPEN_WEATHER_MAP_POLLUTION_API_OKHTTP, type, coordString)).newBuilder();
+        urlBuilder.addQueryParameter(APIKEY, OPEN_WEATHER_MAPS_APP_ID);
+        String url = urlBuilder.build().toString();
+
+        // get request
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        try {
+            Response response = okHttpClient.newCall(request).execute();
+            return response.body().string();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     private static String getJSONWeatherByParametr(String query, String parametr) {
         return getJSONWeatherByParametr(query, parametr, MainParametr.WEATHER.getDescription());
@@ -163,5 +191,17 @@ public class WeatherDataLoader {
             return null;
         }
         return forecastModelArray;
+    }
+
+    public static PollutionModelArray getPollutionByCoordsAndType(String type, CoordModel coordModel) {
+        String jsonString = getJSONCurrentPollutionByCoordsAndType(type, coordModel);
+        if (jsonString == null)
+            return null;
+
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+        PollutionModelArray pollutionModelArray = gson.fromJson(jsonString, PollutionModelArray.class);
+
+        return pollutionModelArray;
     }
 }

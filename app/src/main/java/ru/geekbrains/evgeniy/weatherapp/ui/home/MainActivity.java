@@ -41,6 +41,10 @@ import ru.geekbrains.evgeniy.weatherapp.model.CityModel;
 import ru.geekbrains.evgeniy.weatherapp.ui.fragments.AddCityListener;
 import ru.geekbrains.evgeniy.weatherapp.ui.fragments.SettingsFragment;
 
+import static ru.geekbrains.evgeniy.weatherapp.data.SupportingLib.EXTRA_CITY_ID;
+import static ru.geekbrains.evgeniy.weatherapp.data.SupportingLib.EXTRA_CITY_TITLE;
+import static ru.geekbrains.evgeniy.weatherapp.data.SupportingLib.EXTRA_LAT;
+import static ru.geekbrains.evgeniy.weatherapp.data.SupportingLib.EXTRA_LON;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, AddCityListener, CityWeatherListener, DeleteEditCityListener {
 
@@ -237,11 +241,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void showForecast(CityModel cityModel) {
-        if (cityModel != null)
-        {
+        if (cityModel != null) {
             Intent intent = new Intent(this, CityForecastActivity.class);
-            intent.putExtra(CityForecastActivity.EXTRA_CITY_TITLE, cityModel.getNameWithCountry());
-            intent.putExtra(CityForecastActivity.EXTRA_CITY_ID, cityModel.id);
+            intent.putExtra(EXTRA_CITY_TITLE, cityModel.getNameWithCountry());
+            intent.putExtra(EXTRA_CITY_ID, cityModel.id);
+            startActivity(intent);
+        }
+    }
+
+    @Override
+    public void showAirPollution(CityModel cityModel) {
+        if (cityModel != null) {
+            Intent intent = new Intent(this, AirPollutionActivity.class);
+            intent.putExtra(EXTRA_CITY_TITLE, cityModel.getNameWithCountry());
+            intent.putExtra(EXTRA_CITY_ID, cityModel.id);
+            intent.putExtra(EXTRA_LAT, cityModel.coord.lat);
+            intent.putExtra(EXTRA_LON, cityModel.coord.lon);
             startActivity(intent);
         }
     }

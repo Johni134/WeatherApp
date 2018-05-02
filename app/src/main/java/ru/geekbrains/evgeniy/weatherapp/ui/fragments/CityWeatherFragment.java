@@ -17,7 +17,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
 
@@ -35,6 +34,7 @@ public class CityWeatherFragment extends Fragment implements View.OnClickListene
     private TextView currentTemperatureTextView;
     private TextView weatherIcon;
     private Button buttonShowHistory;
+    private Button buttonShowAirPollution;
 
     private final Handler handler = new Handler();
 
@@ -75,6 +75,8 @@ public class CityWeatherFragment extends Fragment implements View.OnClickListene
         weatherIcon = view.findViewById(R.id.weather_icon);
         buttonShowHistory = view.findViewById(R.id.buttonShowHistory);
         buttonShowHistory.setOnClickListener(this);
+        buttonShowAirPollution = view.findViewById(R.id.buttonShowAirPollution);
+        buttonShowAirPollution.setOnClickListener(this);
     }
 
     @Override
@@ -196,11 +198,15 @@ public class CityWeatherFragment extends Fragment implements View.OnClickListene
 
     @Override
     public void onClick(View v) {
+        Context activity = getActivity();
         switch (v.getId()) {
             case R.id.buttonShowHistory:
-                Context activity = getActivity();
                 if (activity instanceof CityWeatherListener)
                     ((CityWeatherListener) activity).showForecast(currentCityModel);
+                break;
+            case R.id.buttonShowAirPollution:
+                if (activity instanceof CityWeatherListener)
+                    ((CityWeatherListener) activity).showAirPollution(currentCityModel);
                 break;
         }
     }

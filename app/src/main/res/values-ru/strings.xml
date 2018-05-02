@@ -37,6 +37,13 @@
     <string name="sunset">Закат</string>
     <string name="update_every_5_minutes">Обновлять каждые 5 минут</string>
     <string name="full_about">Создано Коротченко Евгением Сергеевичем (kec@inbox.ru)</string>
+    <string name="tabCO">Монооксид углерода</string>
+    <string name="tabO3">Озон</string>
+    <string name="tabSO2">Диоксид серы</string>
+    <string name="tabNO2">Двуокись азота</string>
+    <string name="show_air_pollution">Показать загрязнение воздуха</string>
+    <string name="menu_show_air_pollution">Показать загрязнение воздуха</string>
+    <string name="current_pollution_description">Текущие значения загрязнения воздуха</string>
 
     <string-array name="cities_num_selection">
         <item>Только избранный</item>

@@ -57,6 +57,13 @@
     <string name="sunset">Sunset</string>
     <string name="update_every_5_minutes">Update every 5 minutes</string>
     <string name="full_about">Created by Korotchenko Evgeniy Sergeevich (kec@inbox.ru)</string>
+    <string name="tabCO">Carbon Monoxide</string>
+    <string name="tabO3">Ozone</string>
+    <string name="tabSO2">Sulfur Dioxide</string>
+    <string name="tabNO2">Nitrogen Dioxide</string>
+    <string name="show_air_pollution">Show air pollution</string>
+    <string name="menu_show_air_pollution">Show air pollution</string>
+    <string name="current_pollution_description">Current air pollution description</string>
 
     <string-array name="cities_num_selection">
         <item>Just favorite</item>

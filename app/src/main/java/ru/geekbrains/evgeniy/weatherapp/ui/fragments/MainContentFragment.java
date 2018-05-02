@@ -1,7 +1,6 @@
 package ru.geekbrains.evgeniy.weatherapp.ui.fragments;
 
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -26,7 +25,6 @@ import java.util.List;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import ru.geekbrains.evgeniy.weatherapp.data.DataHelper;
-import ru.geekbrains.evgeniy.weatherapp.ui.home.MainActivity;
 import ru.geekbrains.evgeniy.weatherapp.ui.home.adapters.CustomElementsAdapter;
 import ru.geekbrains.evgeniy.weatherapp.R;
 import ru.geekbrains.evgeniy.weatherapp.data.WeatherDataLoader;
@@ -313,6 +311,13 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
         Context activity = getActivity();
         if (activity instanceof CityWeatherListener)
             ((CityWeatherListener) activity).showForecast(cityModel);
+    }
+
+    @Override
+    public void showAirPollution(CityModel cityModel) {
+        Context activity = getActivity();
+        if (activity instanceof CityWeatherListener)
+            ((CityWeatherListener) activity).showAirPollution(cityModel);
     }
 
     @Override

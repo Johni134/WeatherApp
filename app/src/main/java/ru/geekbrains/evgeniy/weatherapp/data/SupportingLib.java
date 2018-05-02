@@ -6,6 +6,11 @@ import java.util.TimeZone;
 
 public class SupportingLib {
 
+    public static final String EXTRA_CITY_ID = "EXTRA_CITY_ID";
+    public static final String EXTRA_CITY_TITLE = "EXTRA_CITY_TITLE";
+    public static final String EXTRA_LAT = "EXTRA_LAT";
+    public static final String EXTRA_LON = "EXTRA_LON";
+
     public static String getLastUpdate(Long dt) {
 
         long time = dt * (long) 1000;
