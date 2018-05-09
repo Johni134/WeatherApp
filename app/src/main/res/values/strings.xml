@@ -64,6 +64,7 @@
     <string name="show_air_pollution">Show air pollution</string>
     <string name="menu_show_air_pollution">Show air pollution</string>
     <string name="current_pollution_description">Current air pollution description</string>
+    <string name="widget_no_data_founded">Updating data...(check your internet connection or cities is not exist)</string>
 
     <string-array name="cities_num_selection">
         <item>Just favorite</item>

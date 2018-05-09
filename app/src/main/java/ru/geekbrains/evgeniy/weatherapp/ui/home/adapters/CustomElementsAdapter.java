@@ -45,6 +45,11 @@ public class CustomElementsAdapter extends RealmRecyclerViewAdapter<CityModel, C
     private RealmResults<CityModel> dataSet;
     private String updateString = "";
 
+    @Override
+    public long getItemId(int position) {
+        return dataSet.get(position).sortId;
+    }
+
     public void setUpdateString(String updateString) {
         this.updateString = updateString;
     }
@@ -63,12 +68,6 @@ public class CustomElementsAdapter extends RealmRecyclerViewAdapter<CityModel, C
         this.dataSet.addChangeListener(realmChangeListener);
         this.realm = realm;
         setHasStableIds(true);
-    }
-
-    @Nullable
-    @Override
-    public CityModel getItem(int index) {
-        return super.getItem(index);
     }
 
     private RealmChangeListener realmChangeListener = new RealmChangeListener<RealmResults<CityModel>>() {
@@ -238,9 +237,11 @@ public class CustomElementsAdapter extends RealmRecyclerViewAdapter<CityModel, C
                 case R.id.menu_show_air_pollution:
                     if (callbacks != null) callbacks.showAirPollution(getAdapterPosition());
                     return true;
+                /*
                 case R.id.menu_edit:
                     if (callbacks != null) callbacks.editView(getAdapterPosition());
                     return true;
+                */
                 case R.id.menu_delete:
                     if (callbacks != null) callbacks.removeView(getAdapterPosition());
                     return true;

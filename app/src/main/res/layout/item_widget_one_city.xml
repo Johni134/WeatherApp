@@ -74,4 +74,13 @@
         android:theme="@style/Widget.Platform.TextView.Update"
         tools:text="Description" />
 
+    <TextView
+        android:id="@+id/tvWidgetUpdate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/tvWidgetSunrise"
+        tools:text="Update"
+        android:theme="@style/Widget.Platform.TextView.Update" />
+
 </RelativeLayout>

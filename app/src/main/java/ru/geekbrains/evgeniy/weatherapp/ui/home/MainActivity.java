@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ScaleDrawable;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
@@ -48,7 +50,9 @@ import static ru.geekbrains.evgeniy.weatherapp.data.SupportingLib.EXTRA_LON;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, AddCityListener, CityWeatherListener, DeleteEditCityListener {
 
-
+    // for nav drawable
+    private int DRAWABLE_NAV_WIDTH = 450;
+    private int DRAWABLE_NAV_HEIGHT = 450;
 
     // views
     private NavigationView navigationView;
@@ -103,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // init views
         initViews();
 
+        /*
         // work with files
         if (!WorkWithFiles.fileExist(this, FILENAME)) {
             Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.fallout);
@@ -114,6 +119,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             ImageView iv = header.findViewById(R.id.imageView);
             iv.setImageBitmap(bmFromFile);
         }
+        */
+
+        Drawable drawable = getResources().getDrawable(R.drawable.ic_location_city_black_24dp);
+        View header = navigationView.getHeaderView(0);
+        ImageView iv = header.findViewById(R.id.imageView);
+        iv.setImageDrawable(drawable);
+        iv.setMinimumWidth(DRAWABLE_NAV_WIDTH);
+        iv.setMinimumHeight(DRAWABLE_NAV_HEIGHT);
 
         // init shared pref key
         WorkWithSharedPreferences.initSharedPreferences(this);

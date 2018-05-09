@@ -99,6 +99,7 @@ public class WidgetCitiesFactory  implements RemoteViewsService.RemoteViewsFacto
                 }
                 rView.setTextViewText(R.id.tvWidgetDescription, description);
             }
+            rView.setTextViewText(R.id.tvWidgetUpdate, SupportingLib.getLastUpdate(cm.dt));
         } else {
             rView = new RemoteViews(context.getPackageName(),
                     R.layout.item_widget);

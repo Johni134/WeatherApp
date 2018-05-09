@@ -8,10 +8,12 @@
         android:title="@string/menu_show_air_pollution"
         android:id="@+id/menu_show_air_pollution"
         android:icon="@android:drawable/ic_menu_edit"/>
+    <!--
     <item
         android:title="@string/menu_edit"
         android:id="@+id/menu_edit"
         android:icon="@android:drawable/ic_menu_edit"/>
+    -->
     <item
         android:title="@string/menu_delete"
         android:id="@+id/menu_delete"

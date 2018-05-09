@@ -44,6 +44,7 @@
     <string name="show_air_pollution">Показать загрязнение воздуха</string>
     <string name="menu_show_air_pollution">Показать загрязнение воздуха</string>
     <string name="current_pollution_description">Текущие значения загрязнения воздуха</string>
+    <string name="widget_no_data_founded">Данные обновляются...(проверьте свое соединение с интернетом, либо города не заданы)</string>
 
     <string-array name="cities_num_selection">
         <item>Только избранный</item>
