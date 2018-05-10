@@ -47,7 +47,7 @@ public class CustomElementsAdapter extends RealmRecyclerViewAdapter<CityModel, C
 
     @Override
     public long getItemId(int position) {
-        return dataSet.get(position).sortId;
+        return dataSet.get(position).id;
     }
 
     public void setUpdateString(String updateString) {
