@@ -107,7 +107,7 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
         new Thread() {
 
             public void run() {
-                final CityModelArray cityModelArray = WeatherDataLoader.getListWeatherByIDs(ids);
+                final CityModelArray cityModelArray = WeatherDataLoader.getListWeatherByIDs(ids, getString(R.string.open_weather_maps_app_id));
                 if (cityModelArray == null) {
                     handler.post(new Runnable() {
 
@@ -197,7 +197,7 @@ public class MainContentFragment extends Fragment implements View.OnClickListene
         new Thread() {//Отдельный поток для получения новых данных в фоне
 
             public void run() {
-                final CityModel model = WeatherDataLoader.getWeatherByCity(city);
+                final CityModel model = WeatherDataLoader.getWeatherByCity(city, getString(R.string.open_weather_maps_app_id));
                 // Вызов методов напрямую может вызвать runtime error
                 // Мы не можем напрямую обновить UI, поэтому используем handler, чтобы обновить интерфейс в главном потоке.
                 if (model == null) {

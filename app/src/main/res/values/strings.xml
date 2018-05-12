@@ -24,8 +24,6 @@
 
     <string name="place_not_found">Sorry, no weather data found.</string>
 
-    <string name="open_weather_maps_app_id">5a7b4adfb331abce78c619ae441ab686</string>
-
     <string name="last_update">Last update:</string>
 
     <!-- не нашел я каких-то дефолтных городов, сам список заполнил немного -->

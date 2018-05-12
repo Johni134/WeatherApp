@@ -11,6 +11,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import io.realm.Realm;
+import ru.geekbrains.evgeniy.weatherapp.R;
 import ru.geekbrains.evgeniy.weatherapp.WeatherApplication;
 import ru.geekbrains.evgeniy.weatherapp.data.DataHelper;
 import ru.geekbrains.evgeniy.weatherapp.data.WeatherDataLoader;
@@ -75,6 +76,6 @@ public class UpdateService extends Service {
 
     public void updateWeathers() {
         Realm realm = Realm.getInstance(WeatherApplication.getRealmConf());
-        DataHelper.updateAllWeathers(realm);
+        DataHelper.updateAllWeathers(realm, getString(R.string.open_weather_maps_app_id));
     }
 }

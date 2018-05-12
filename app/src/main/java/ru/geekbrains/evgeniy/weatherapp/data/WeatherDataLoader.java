@@ -37,9 +37,6 @@ public class WeatherDataLoader {
     private static final int ALL_GOOD = 200;
     private static final int ALL_GROUP_GOOD = 0;
 
-    // переношу сюда app id, чтобы не использовать context
-    private static final String OPEN_WEATHER_MAPS_APP_ID = "5a7b4adfb331abce78c619ae441ab686";
-
     enum MainParametr {
         WEATHER("weather"),
         GROUP("group"),
@@ -54,14 +51,14 @@ public class WeatherDataLoader {
         public String getDescription() {return description;}
     };
 
-    private static String getJSONCurrentPollutionByCoordsAndType(String type, CoordModel coordModel) {
+    private static String getJSONCurrentPollutionByCoordsAndType(String type, CoordModel coordModel, String api_ip) {
 
         String coordString = coordModel.lat + "," + coordModel.lon;
 
         // init
         OkHttpClient okHttpClient = new OkHttpClient();
         HttpUrl.Builder urlBuilder = HttpUrl.parse(String.format(OPEN_WEATHER_MAP_POLLUTION_API_OKHTTP, type, coordString)).newBuilder();
-        urlBuilder.addQueryParameter(APIKEY, OPEN_WEATHER_MAPS_APP_ID);
+        urlBuilder.addQueryParameter(APIKEY, api_ip);
         String url = urlBuilder.build().toString();
 
         // get request
@@ -79,16 +76,16 @@ public class WeatherDataLoader {
         }
     }
 
-    private static String getJSONWeatherByParametr(String query, String parametr) {
-        return getJSONWeatherByParametr(query, parametr, MainParametr.WEATHER.getDescription());
+    private static String getJSONWeatherByParametr(String query, String parametr, String api_id) {
+        return getJSONWeatherByParametr(query, parametr, MainParametr.WEATHER.getDescription(), api_id);
     }
 
-    private static String getJSONWeatherByParametr(String query, String parametr, String mainParametr) {
+    private static String getJSONWeatherByParametr(String query, String parametr, String mainParametr, String api_id) {
         // init
         OkHttpClient okHttpClient = new OkHttpClient();
         HttpUrl.Builder urlBuilder = HttpUrl.parse(String.format(OPEN_WEATHER_MAP_API_OKHTTP, mainParametr)).newBuilder();
         urlBuilder.addQueryParameter(parametr, query);
-        urlBuilder.addQueryParameter(APIKEY, OPEN_WEATHER_MAPS_APP_ID);
+        urlBuilder.addQueryParameter(APIKEY, api_id);
         urlBuilder.addQueryParameter("units", "metric");
         urlBuilder.addQueryParameter(LOCALE, System.getProperty("user.language"));
         String url = urlBuilder.build().toString();
@@ -131,9 +128,9 @@ public class WeatherDataLoader {
         */
     }
 
-    public static CityModel getWeatherByCity(String city) {
+    public static CityModel getWeatherByCity(String city, String api_id) {
 
-        String jsonString = getJSONWeatherByParametr(city, "q");
+        String jsonString = getJSONWeatherByParametr(city, "q", api_id);
         if (jsonString == null)
             return null;
 
@@ -147,8 +144,8 @@ public class WeatherDataLoader {
         return model;
     }
 
-    public static CityModel getWeatherByID(Context context, String id) {
-        String jsonString = getJSONWeatherByParametr(id, "id");
+    public static CityModel getWeatherByID(String id, String api_id) {
+        String jsonString = getJSONWeatherByParametr(id, "id", api_id);
         if (jsonString == null)
             return null;
 
@@ -162,8 +159,8 @@ public class WeatherDataLoader {
         return model;
     }
 
-    public static CityModelArray getListWeatherByIDs(String ids) {
-        String jsonString = getJSONWeatherByParametr(ids, "id", MainParametr.GROUP.getDescription());
+    public static CityModelArray getListWeatherByIDs(String ids, String api_id) {
+        String jsonString = getJSONWeatherByParametr(ids, "id", MainParametr.GROUP.getDescription(), api_id);
         if (jsonString == null)
             return null;
         GsonBuilder builder = new GsonBuilder();
@@ -178,8 +175,8 @@ public class WeatherDataLoader {
         return cityModelArray;
     }
 
-    public static ForecastModelArray getForecastWeatherByID(String id) {
-        String jsonString = getJSONWeatherByParametr(id, "id", MainParametr.FORECAST.getDescription());
+    public static ForecastModelArray getForecastWeatherByID(String id, String api_id) {
+        String jsonString = getJSONWeatherByParametr(id, "id", MainParametr.FORECAST.getDescription(), api_id);
         if (jsonString == null)
             return null;
 
@@ -193,8 +190,8 @@ public class WeatherDataLoader {
         return forecastModelArray;
     }
 
-    public static PollutionModelArray getPollutionByCoordsAndType(String type, CoordModel coordModel) {
-        String jsonString = getJSONCurrentPollutionByCoordsAndType(type, coordModel);
+    public static PollutionModelArray getPollutionByCoordsAndType(String type, CoordModel coordModel, String api_id) {
+        String jsonString = getJSONCurrentPollutionByCoordsAndType(type, coordModel, api_id);
         if (jsonString == null)
             return null;
 

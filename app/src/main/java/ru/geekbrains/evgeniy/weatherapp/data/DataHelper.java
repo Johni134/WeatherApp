@@ -147,7 +147,7 @@ public class DataHelper {
         return StringUtils.join(ids, ",");
     }
 
-    public static void updateAllWeathers(Realm realm) {
+    public static void updateAllWeathers(Realm realm, final String api_id) {
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
@@ -156,7 +156,7 @@ public class DataHelper {
                 for (CityModel cm: realmResults) {
                     ids.add(String.valueOf(cm.id));
                 }
-                CityModelArray cityModelArray = WeatherDataLoader.getListWeatherByIDs(StringUtils.join(ids, ","));
+                CityModelArray cityModelArray = WeatherDataLoader.getListWeatherByIDs(StringUtils.join(ids, ","), api_id);
                 if(cityModelArray != null && cityModelArray.list.size() > 0) {
                     for (CityModel cm: cityModelArray.list) {
                         createOrUpdateFromObjectSync(realm, cm);

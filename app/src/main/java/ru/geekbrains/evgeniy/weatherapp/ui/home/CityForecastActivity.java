@@ -68,7 +68,7 @@ public class CityForecastActivity extends AppCompatActivity {
         else {
             new Thread() {
                 public void run() {
-                    final ForecastModelArray forecastModelArray = WeatherDataLoader.getForecastWeatherByID(cityId.toString());
+                    final ForecastModelArray forecastModelArray = WeatherDataLoader.getForecastWeatherByID(cityId.toString(), getString(R.string.open_weather_maps_app_id));
                     handler.post(new Runnable() {
                         @Override
                         public void run() {

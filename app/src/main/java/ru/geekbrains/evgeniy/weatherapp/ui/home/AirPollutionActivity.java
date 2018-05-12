@@ -131,7 +131,7 @@ public class AirPollutionActivity extends AppCompatActivity implements TabHost.O
             final String finalType = type;
             new Thread() {
                 public void run() {
-                    final PollutionModelArray pollutionModelArray = WeatherDataLoader.getPollutionByCoordsAndType(finalType, coordModel);
+                    final PollutionModelArray pollutionModelArray = WeatherDataLoader.getPollutionByCoordsAndType(finalType, coordModel, getString(R.string.open_weather_maps_app_id));
                     handler.post(new Runnable() {
                         @Override
                         public void run() {

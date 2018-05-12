@@ -100,7 +100,7 @@ public class CityWeatherFragment extends Fragment implements View.OnClickListene
         new Thread() {//Отдельный поток для получения новых данных в фоне
 
             public void run() {
-                final CityModel model = WeatherDataLoader.getWeatherByID(getActivity(), currentCityModel.id.toString());
+                final CityModel model = WeatherDataLoader.getWeatherByID(currentCityModel.id.toString(), getString(R.string.open_weather_maps_app_id));
                 // Вызов методов напрямую может вызвать runtime error
                 // Мы не можем напрямую обновить UI, поэтому используем handler, чтобы обновить интерфейс в главном потоке.
                 if (model == null) {
