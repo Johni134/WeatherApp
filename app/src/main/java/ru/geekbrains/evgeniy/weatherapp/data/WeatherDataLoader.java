@@ -17,6 +17,9 @@ import ru.geekbrains.evgeniy.weatherapp.model.CityModelArray;
 import ru.geekbrains.evgeniy.weatherapp.model.CoordModel;
 import ru.geekbrains.evgeniy.weatherapp.model.ForecastModelArray;
 import ru.geekbrains.evgeniy.weatherapp.model.PollutionModelArray;
+import ru.geekbrains.evgeniy.weatherapp.model.PollutionNo2Model;
+import ru.geekbrains.evgeniy.weatherapp.model.PollutionNo2ModelArray;
+import ru.geekbrains.evgeniy.weatherapp.model.PollutionO3ModelArray;
 
 
 /**
@@ -197,8 +200,32 @@ public class WeatherDataLoader {
 
         GsonBuilder builder = new GsonBuilder();
         Gson gson = builder.create();
-        PollutionModelArray pollutionModelArray = gson.fromJson(jsonString, PollutionModelArray.class);
 
-        return pollutionModelArray;
+        return gson.fromJson(jsonString, PollutionModelArray.class);
+
+    }
+
+    public static PollutionNo2ModelArray getPollutionNo2(CoordModel coordModel, String api_id) {
+        String jsonString = getJSONCurrentPollutionByCoordsAndType("no2", coordModel, api_id);
+
+        if (jsonString == null)
+            return null;
+
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+
+        return gson.fromJson(jsonString, PollutionNo2ModelArray.class);
+    }
+
+    public static PollutionO3ModelArray getPollutionO3(CoordModel coordModel, String api_id) {
+        String jsonString = getJSONCurrentPollutionByCoordsAndType("o3", coordModel, api_id);
+
+        if (jsonString == null)
+            return null;
+
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+
+        return gson.fromJson(jsonString, PollutionO3ModelArray.class);
     }
 }
